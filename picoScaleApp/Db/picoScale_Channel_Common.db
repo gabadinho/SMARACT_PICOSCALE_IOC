@@ -1,0 +1,136 @@
+#PicoScale's data sources mapping
+
+record(waveform, "$(C):$(P):POS_$(Ch)"){
+	field(DESC, "Position")
+	field(EGU, "nm")
+}
+
+record(waveform, "$(C):$(P):VEL_$(Ch)"){
+	field(DESC, "Velocity")
+	field(EGU, "")
+}
+
+record(waveform, "$(C):$(P):ACC_$(Ch)"){
+	field(DESC, "Acceleration")
+	field(EGU, "")
+}
+
+record(ai, "$(C):$(P):SWRAW_$(Ch)"){
+	field(DESC, "Sine raw")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):S2WRAW_$(Ch)"){
+	field(DESC, "Cosine raw")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):SWQUALITY_$(Ch)"){
+	field(DESC, "Sine quality")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):S2WQUALITY_$(Ch)"){
+	field(DESC, "Cosine quality")
+	field(DTYPE, "Soft Channel")
+}
+
+
+#Records for PicoScale communication
+
+record(string, "$(C):$(P):LOCATOR_$(Ch)"){
+	field(DESC, "Device address format for connection establishment")
+	field(VAL, "network:$(IP):55555")
+	field(PINI, TRUE)
+	field(FLNK, "$(C):$(P):OPEN")
+}
+
+record(sub, "$(C):$(P):OPEN_$(Ch)"){
+	field(DESC, "Establishes connection with PicoScale")
+	field(SNAM, "picoScale_open")
+}
+
+record(sub, "$(C):$(P):CLOSE_$(Ch)"){
+	field(DESC, "Terminates connection with PicoScale")
+	field(SNAM, "picoScale_close")
+}
+
+record(sub, "$(C):$(P):FRAMERATE_$(Ch)"){
+	field(DESC, "Rate for data src. streaming")
+	field(EGU, "Hz")
+	field(SNAM, "picoScale_frameRate")
+}
+
+record(mbbi, "$(C):$(P):CHANNELINDX_$(Ch)"){
+	field(DESC, "Channel index to poll")
+	field(ZRVL, 0)
+	field(ONVL, 1)
+	field(TWVL, 2)
+	field(ZRST, "0")
+	field(ONST, "1")
+	field(TWVL, "2")
+}
+
+record(mbbi, "$(C):$(P):DATASRCINDX_$(Ch)"){
+	field(DESC, "Data source index to poll")
+	field(ZRVL, 0)
+	field(ONVL, 1)
+	field(TWVL, 2)
+	field(THVL, 3)
+	field(FRVL, 4)
+	field(FVVL, 5)
+	field(SXVL, 6)
+	field(SVVL, 7)
+	field(EIVL, 8)
+	
+}
+
+
+record(aSub, "$(C):$(P):STREAM_$(Ch)"){
+	field(DESC, "Data stream")
+	field(SNAM, "picoScale_dataStream")
+	field(INPA, "$(C):$(P):DATASRCINDX_$(Ch)")
+	field(INPB, "$(C):$(P):CHANNELINDX_$(Ch)")
+	field(INPC, "$(C):$(P):FRAMERATE")
+}
+
+record(aSub, "$(C):$(P):STREAM_PVA_$(Ch)"){
+	field(DESC, "Data stream of Position/Velocity/Acceleration data sources")
+	field(SNAM, "picoScale_dataStream_PVA")
+	field(OUTA, "$(C):$(P):POS_$(Ch)")
+	field(FTVA, DOUBLE)
+	field(NOVA, 2000)
+	field(OUTB, "$(C):$(P):VEL_$(Ch)")
+	field(FTVB, DOUBLE)
+	field(NOVB, 2000)
+	field(OUTC, "$(C):$(P):ACC_$(Ch)")
+	field(FTVC, DOUBLE)
+	field(NOVC, 2000)
+	field(INPA, "$(C):$(P):FRAMERATE")
+}
+
+record(sub, "$(C):$(P):STREAM_$(Ch)"){
+	field(DESC, "")
+}
+
+
+#Records for the CATERETE experiment
+
+#record for triggering PicoScale position acquisition on Channel 'Ch'
+#record(bi, "$(C):$(P):START_$(Ch)"){
+#	field(DESC, "Trigger record")
+#	field(VAL, 0)
+#	field(ZNAM, "Not triggered")
+#	field(ONAM, "Triggered")
+#	field(FLNK, "$(C):$(P):STREAM_PVA_$(Ch)")	
+#}
+
+
+
+
+
+
+
+
+
+

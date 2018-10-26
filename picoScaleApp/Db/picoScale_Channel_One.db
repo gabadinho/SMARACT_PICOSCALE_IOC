@@ -1,0 +1,80 @@
+record(ai, "$(C):$(P):CNTR_ZERO_"$(Ch)){
+	field(DESC, "Counter Zero")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CNTR_ONE_"$(Ch)){
+	field(DESC, "Counter 1")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):ENV_TEMP_"$(Ch)){
+	field(DESC, "Environt. Temp.")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):ENV_HUM_"$(Ch)){
+	field(DESC, "Environt. Hum.")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):ENV_PRESS_"$(Ch)){
+	field(DESC, "Environt. Press.")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):GPIO_ADC_0_"$(Ch)){
+	field(DESC, "GPIO ADC 0")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):GPIO_ADC_1_"$(Ch)){
+	field(DESC, "GPIO ADC 1")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):GPIO_ADC_2_"$(Ch)){
+	field(DESC, "GPIO ADC 2")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_0_"$(Ch)){
+	field(DESC, "Calc. Sys. 0")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_1_"$(Ch)){
+	field(DESC, "Calc. Sys. 1")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_2_"$(Ch)){
+	field(DESC, "Calc. Sys. 2")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_3_"$(Ch)){
+	field(DESC, "Calc. Sys. 3")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_4_"$(Ch)){
+	field(DESC, "Calc. Sys. 4")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_5_"$(Ch)){
+	field(DESC, "Calc. Sys. 5")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_6_"$(Ch)){
+	field(DESC, "Calc. Sys. 6")
+	field(DTYPE, "Soft Channel")
+}
+
+record(ai, "$(C):$(P):CALC_SYS_7_"$(Ch)){
+	field(DESC, "Calc. Sys. 7")
+	field(DTYPE, "Soft Channel")
+}
+

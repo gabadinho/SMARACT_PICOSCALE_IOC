@@ -1,0 +1,154 @@
+record(stringin, "$(C):$(P):LOCATOR"){
+	field(DESC, "Device address for connection establishment")
+	field(VAL, "network:$(IP):55555")
+	field(PINI, "YES")
+	field(FLNK, "$(C):$(P):OPEN")
+}
+
+record(sub, "$(C):$(P):OPEN"){
+	field(DESC, "Establishes connection with PicoScale")
+	field(PINI, "YES")
+	field(INPA, "$(C):$(P):LOCATOR.VAL")
+	field(SNAM, "picoScale_open")
+}
+
+record(sub, "$(C):$(P):CLOSE"){
+	field(DESC, "Terminates connection with PicoScale")
+	field(SNAM, "picoScale_close")
+}
+
+record(longin, "$(C):$(P):FRAMERATE"){
+	field(DESC, "Rate for data src. streaming")
+	field(VAL, "1")
+	field(EGU, "Hz")
+	field(PINI, "YES")
+}
+
+record(mbbi, "$(C):$(P):FRAMEAGGR"){
+	field(DESC, "Frame aggregation")
+	field(ZRVL, "1")
+	field(ONVL, "2")
+	field(TWVL, "4")
+	field(TRVL, "8")
+	field(FRVL, "16")
+	field(FVVL, "32")
+	field(SXVL, "64")
+	field(SVVL, "128")
+	field(EIVL, "256")
+	field(NIVL, "512")
+	field(TEVL, "1024")
+	field(ELVL, "1024")
+	field(ZRST, "38 / 19 / 9 / 4 / 2 / 1 Hz")
+	field(ONST, "76 Hz")
+	field(TWST, "152 Hz")
+	field(THST, "305 Hz")
+	field(FRST, "610 Hz")
+	field(FVST, "1.22 kHz")
+	field(SXST, "2.44 kHz")
+	field(SVST, "4.88 kHz")
+	field(EIST, "9.77 kHz")
+	field(NIST, "19.53 kHz")
+	field(TEST, "625 / 312.5 / 156.25 / 78.13 / 39.06 kHz")
+	field(ELST, "10 / 5 / 2.5 / 1.25 MHz")
+}
+
+record(mbbi, "$(C):$(P):BUFFERAGGR"){
+	field(DESC, "Stream buffer aggregation")
+	field(ZRVL, "0")
+	field(TWVL, "32")
+	field(THVL, "48")
+	field(FRVL, "64")
+	field(FVVL, "96")
+	field(SXVL, "128")
+}
+
+record(bi, "$(C):$(P):INTERLEAVING"){
+	field(DESC, "Interleaved mode")
+	field(ZRVL, "0")
+	field(ONVL, "1")
+	field(ZRST, "Disabled")
+	field(ONST, "Enabled")
+}
+
+record(aSub, "$(C):$(P):STREAM"){
+	field(DESC, "Data streaming of specified data source")
+	field(INPA, "$(C):$(P):CHANNELINDX_$(Ch)")
+	field(INPB, "$(C):$(P):DATASRCINDX_$(Ch)")
+	field(INPC, "$(C):$(P):FRAMERATE")
+	field(SNAM, "picoScale_stream")
+}
+
+#Streaming of specific position/velocity/acceleration datasources (frequency: 2kHz)
+record(aSub, "$(C):$(P):STREAM_PVA"){
+	field(DESC, "Data stream of Position/Velocity/Acceleration data sources from all channels")
+	field(INPA, "$(C):$(P):FRAMERATE")
+	field(SNAM, "picoScale_streamPVA")
+	field(OUTA, "$(C):$(P):POS_0")
+	field(FTVA, DOUBLE)
+	field(NOVA, 2000)
+	field(OUTB, "$(C):$(P):VEL_0")
+	field(FTVB, DOUBLE)
+	field(NOVB, 2000)
+	field(OUTC, "$(C):$(P):ACC_0")
+	field(FTVC, DOUBLE)
+	field(NOVC, 2000)
+	field(OUTD, "$(C):$(P):POS_1")
+	field(FTVD, DOUBLE)
+	field(NOVD, 2000)
+	field(OUTE, "$(C):$(P):VEL_1")
+	field(FTVE, DOUBLE)
+	field(NOVE, 2000)
+	field(OUTF, "$(C):$(P):ACC_1")
+	field(FTVF, DOUBLE)
+	field(NOVF, 2000)
+	field(OUTG, "$(C):$(P):POS_2")
+	field(FTVG, DOUBLE)
+	field(NOVG, 2000)
+	field(OUTH, "$(C):$(P):VEL_2")
+	field(FTVH, DOUBLE)
+	field(NOVH, 2000)
+	field(OUTI, "$(C):$(P):ACC_2")
+	field(FTVI, DOUBLE)
+	field(NOVI, 2000)
+}
+
+record(sub, "$(C):$(P):POLL"){
+	field(DESC, "Polling of specified data source")
+	field(INPA, "$(C):$(P):CHANNELINDX_$(Ch)")
+	field(INPB, "$(C):$(P):DATASRCINDX_$(Ch)")
+	field(SNAM, "picoScale_poll")
+}
+
+record(mbbi, "$(C):$(P):CHANNELINDX"){
+	field(DESC, "Channel index")
+	field(ZRVL, "0")
+	field(ONVL, "1")
+	field(TWVL, "2")
+	field(ZRST, "Channel 0")
+	field(ONST, "Channel 1")
+	field(TWVL, "Channel 2")
+}
+
+record(mbbi, "$(C):$(P):DATASRCINDX"){
+	field(DESC, "Data source index")
+	field(ZRVL, 0)
+	field(ONVL, 1)
+	field(TWVL, 2)
+	field(THVL, 3)
+	field(FRVL, 4)
+	field(FVVL, 5)
+	field(SXVL, 6)
+	field(SVVL, 7)
+	field(EIVL, 8)
+	field(ZRST, "Position")
+	field(ONST, "Velocity")
+	field(TWST, "Acceleration")
+	field(THST, "Swraw")
+	field(FRST, "S2wraw")
+	field(FVST, "Sw")
+	field(SXST, "S2w")
+	field(SVST, "SwQuality")
+	field(EIST, "S2wQuality")
+}
+
+

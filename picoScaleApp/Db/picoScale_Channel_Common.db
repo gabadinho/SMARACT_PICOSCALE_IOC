@@ -1,4 +1,4 @@
-#----------------- PicoScale's data sources mapping -----------------
+# PicoScale's datasources
 
 record(waveform, "$(C):$(P):POS_$(Ch)"){
 	field(DESC, "Position")
@@ -41,31 +41,7 @@ record(ai, "$(C):$(P):S2WQUALITY_$(Ch)"){
 	field(DTYPE, "Soft Channel")
 }
 
-#----------------- Records for Adjustment -----------------
 
-record(longin, "$(C):$(P):WORKINGDIST_MIN_$(Ch)"){
-	field(DESC, "Minimum working distance for adjustment")
-	field(VAL, "30")
-	field(EGU, "mm")
-	field(LOPR, "1")
-	field(HIPR, "500")
-}
-
-record(longin, "$(C):$(P):WORKINGDIST_MAX_$(Ch)"){
-	field(DESC, "Maximum working distance for adjustment")
-	field(VAL, "80")
-	field(EGU, "mm")
-	field(LOPR, "1")
-	field(HIPR, "500")
-}
-
-record(sub, "$(C):$(P):ADJUST_$(Ch)"){
-	field(DESC, "Manual and auto adjustmment routine")
-	field(INPA, "$(C):$(P):WORKINGDIST_MIN_$(Ch)")
-	field(INPB, "$(C):$(P):WORKINGDIST_MAX_$(Ch)")
-	field(INPC, "$(C):$(P):CHANNELINDX")
-	field(SNAM, "picoScale_adjust")
-}
 
 
 

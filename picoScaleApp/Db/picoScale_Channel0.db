@@ -1,3 +1,5 @@
+# PicoScale Channel 0 datasources
+
 record(ai, "$(C):$(P):CNTR_ZERO"){
 	field(DESC, "Counter Zero")
 	field(DTYPE, "Soft Channel")

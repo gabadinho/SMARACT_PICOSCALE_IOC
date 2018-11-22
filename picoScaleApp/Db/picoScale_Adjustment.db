@@ -1,0 +1,25 @@
+#----------------- Records for Adjustment -----------------
+
+record(longout, "$(C):$(P):WORKINGDIST_MIN"){
+	field(DESC, "Minimum working distance for adjustment")
+	field(VAL, "30")
+	field(EGU, "mm")
+	field(LOPR, "1")
+	field(HIPR, "500")
+}
+
+record(longout, "$(C):$(P):WORKINGDIST_MAX"){
+	field(DESC, "Maximum working distance for adjustment")
+	field(VAL, "80")
+	field(EGU, "mm")
+	field(LOPR, "1")
+	field(HIPR, "500")
+}
+
+record(sub, "$(C):$(P):ADJUST"){
+	field(DESC, "Manual and auto adjustmment routine")
+	field(INPA, "$(C):$(P):WORKINGDIST_MIN_$(Ch)")
+	field(INPB, "$(C):$(P):WORKINGDIST_MAX_$(Ch)")
+	field(INPC, "$(C):$(P):CHANNELINDX")
+	field(SNAM, "picoScale_adjust")
+}

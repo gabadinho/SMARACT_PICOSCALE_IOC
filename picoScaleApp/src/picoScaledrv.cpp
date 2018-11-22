@@ -1,3 +1,4 @@
+#include <subRecord.h>
 #include <registryFunction.h>
 #include <genSubRecord.h>
 #include <asynPortDriver.h>
@@ -70,12 +71,12 @@ class PicoScaledrv : public asynPortDriver {
 		PicoScaledrv(const char *portName);
 
 		//SmarAct library calls
-		unsigned int picoScale_open(genSubRecord *precord);
-		unsigned int picoScale_close();
-		unsigned int picoScale_stream();
-		unsigned int picoScale_streamPVA(unsigned short );
-		unsigned int picoScale_poll();
-		unsigned int picoScale_adjust();
+		unsigned int picoScale_open(struct subRecord *psub);
+		unsigned int picoScale_close(struct subRecord *psub);
+		unsigned int picoScale_stream(genSubRecord *pgenSub);
+		unsigned int picoScale_streamPVA(genSubRecord *pgenSub);
+		unsigned int picoScale_poll(struct subRecord *psub);
+		unsigned int picoScale_adjust(struct subRecord *psub);
 		
 	protected:
 		// --- Input parameters ---
@@ -139,6 +140,22 @@ class PicoScaledrv : public asynPortDriver {
 		//--------------------------
 }
 
+#define MAX_SIGNALS		
+
+PicoScaledrv::PicoScaledrv(const char *portName):
+	asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
+// Interfaces that we implement
+asynInt32Mask | asynUInt32DigitalMask | asynDrvUserMask,
+// Interfaces that do callbacks
+asynUInt32DigitalMask,
+ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1,
+/* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
+0, 0), /* Default priority and stack size */
+			
+			)
+{
+
+}
 
 unsigned int picoScale_open(psub)
 	struct subRecord  *psub;

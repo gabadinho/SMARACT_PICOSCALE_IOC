@@ -1,8 +1,3 @@
-#include        <types.h>
-#include        <dbDefs.h>
-#include        <subRecord.h>
-#include        <dbCommon.h>
-#include        <recSup.h>
 #include "SmarActSI.h"
 #include "SmarActSIConstants_PS.h"
 

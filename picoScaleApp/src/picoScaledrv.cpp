@@ -3,158 +3,20 @@
 #include <genSubRecord.h>
 #include <asynPortDriver.h>
 #include <picoScale_dataSrc.h>
-
-static const char *driverName = "picoScaledrv";
-
-//-------------------------------- Input parameters --------------------------------
-//Channel 0 parameters
-#define pos_ch0_waveformValueString		"POS_CH0_WAVEFORM_VAL"
-#define vel_ch0_waveformValueString		"VEL_CH0_WAVEFORM_VAL"
-#define acc_ch0_waveformValueString		"ACC_CH0_WAVEFORM_VAL"
-#define swraw_ch0_analogInValueString		"SWRAW_CH0_ANALOGIN_VAL"
-#define s2wraw_ch0_analogInValueString		"S2WRAW_CH0_ANALOGIN_VAL"
-#define swquality_ch0_analogInValueString	"SWQUALITY_CH0_ANALOGIN_VAL"
-#define s2wquality_ch0_analogInValueString	"S2WQUALITY_CH0_ANALOGIN_VAL"
-#define cntrZero_ch0_analogInValueString	"CNTRZERO_CH0_ANALOGIN_VAL"
-#define cntrOne_ch0_analogInValueString		"CNTRONE_CH0_ANALOGIN_VAL"
-#define envtemp_ch0_analogInValueString		"ENVTEMP_CH0_ANALOGIN_VAL"
-#define envHum_ch0_analogInValueString		"ENVHUM_CH0_ANALOGIN_VAL"
-#define envPress_ch0_analogInValueString	"ENVPRESS_CH0_ANALOGIN_VAL"
-#define gpioAdc0_ch0_analogInValueString	"GPIOADC0_CH0_ANALOGIN_VAL"
-#define gpioAdc1_ch0_analogInValueString	"GPIOADC1_CH0_ANALOGIN_VAL"
-#define gpioAdc2_ch0_analogInValueString	"GPIOADC2_CH0_ANALOGIN_VAL"
-#define calcSys0_ch0_analogInValueString	"CALCSYS0_CH0_ANALOGIN_VAL"
-#define calcSys1_ch0_analogInValueString	"CALCSYS1_CH0_ANALOGIN_VAL"
-#define calcSys2_ch0_analogInValueString	"CALCSYS2_CH0_ANALOGIN_VAL"
-#define calcSys3_ch0_analogInValueString	"CALCSYS3_CH0_ANALOGIN_VAL"
-#define calcSys4_ch0_analogInValueString	"CALCSYS4_CH0_ANALOGIN_VAL"
-#define calcSys5_ch0_analogInValueString	"CALCSYS5_CH0_ANALOGIN_VAL"
-#define calcSys6_ch0_analogInValueString	"CALCSYS6_CH0_ANALOGIN_VAL"
-#define calcSys7_ch0_analogInValueString	"CALCSYS7_CH0_ANALOGIN_VAL"
-
-//Channel 1 parameters
-#define pos_ch1_waveformValueString		"POS_CH1_WAVEFORM_VAL"
-#define vel_ch1_waveformValueString		"VEL_CH1_WAVEFORM_VAL"
-#define acc_ch1_waveformValueString		"ACC_CH1_WAVEFORM_VAL"
-#define swraw_ch1_analogInValueString		"SWRAW_CH1_ANALOGIN_VAL"
-#define s2wraw_ch1_analogInValueString		"S2WRAW_CH1_ANALOGIN_VAL"
-#define swquality_ch1_analogInValueString	"SWQUALITY_CH1_ANALOGIN_VAL"
-#define s2wquality_ch1_analogInValueString	"S2WQUALITY_CH1_ANALOGIN_VAL"
-
-//Channel 2 parameters 
-#define pos_ch2_waveformValueString		"POS_CH2_WAVEFORM_VAL"
-#define vel_ch2_waveformValueString		"VEL_CH2_WAVEFORM_VAL"
-#define acc_ch2_waveformValueString		"ACC_CH2_WAVEFORM_VAL"
-#define swraw_ch2_analogInValueString		"SWRAW_CH2_ANALOGIN_VAL"
-#define s2wraw_ch2_analogInValueString		"S2WRAW_CH2_ANALOGIN_VAL"
-#define swquality_ch2_analogInValueString	"SWQUALITY_CH2_ANALOGIN_VAL"
-#define s2wquality_ch2_analogInValueString	"S2WQUALITY_CH2_ANALOGIN_VAL"
-//------------------------------------------------------------------------------------
-
-//-------------------------------- Output parameters ---------------------------------
-//Communication parameters
-#define locator_stringOutValueString		"LOCATOR_STRINGOUT_VAL"
-#define framerate_longOutValueString		"FRAMERATE_LONGOUT_VAL"
-#define frameaggr_mbboValueString		"FRAMEAGGR_MBBO_VAL"
-#define bufferaggr_mbboValueString		"BUFFERAGGR_MBBO_VAL"
-#define interleaving_boValueString		"INTERLEAVING_BO_VAL"
-#define channelindx_mbboValueString		"CHANNELINDX_MBBO_VAL"
-#define datasrcindx_mbboValueString		"DATASRCINDX_MBBO_VAL"
-
-//Adjustment parameters
-#define workingdistmin_longOutValueString	"WORKINGDISTMIN_LONGOUT_VAL"
-#define workingdistmax_longOutValueString	"WORKINGDISTMAX_LONGOUT_VAL"
-//------------------------------------------------------------------------------------
-
-class PicoScaledrv : public asynPortDriver {
-	public:
-		PicoScaledrv(const char *portName);
-
-		//SmarAct library calls
-		unsigned int picoScale_open(struct subRecord *psub);
-		unsigned int picoScale_close(struct subRecord *psub);
-		unsigned int picoScale_stream(genSubRecord *pgenSub);
-		unsigned int picoScale_streamPVA(genSubRecord *pgenSub);
-		unsigned int picoScale_poll(struct subRecord *psub);
-		unsigned int picoScale_adjust(struct subRecord *psub);
-		
-	protected:
-		// --- Input parameters ---
-		//Channel 0 parameters
-		double pos_ch0_waveformValue[2000];
-		double vel_ch0_waveformValue[2000];
-		double acc_ch0_waveformValuev[2000];
-		double swraw_ch0_analogInValue;
-		double s2wraw_ch0_analogInValue;
-		double swquality_ch0_analogInValue;
-		double s2wquality_ch0_analogInValue;
-		double cntrZero_ch0_analogInValue;
-		double cntrOne_ch0_analogInValue;
-		double envtemp_ch0_analogInValueString;
-		double envHum_ch0_analogInValueString;
-		double envPress_ch0_analogInValue;
-		double gpioAdc0_ch0_analogInValue;
-		double gpioAdc1_ch0_analogInValue;
-		double gpioAdc2_ch0_analogInValue;
-		double calcSys0_ch0_analogInValue;
-		double calcSys1_ch0_analogInValue;
-		double calcSys2_ch0_analogInValue;
-		double calcSys3_ch0_analogInValue;
-		double calcSys4_ch0_analogInValue;
-		double calcSys5_ch0_analogInValue;
-		double calcSys6_ch0_analogInValue;
-		double calcSys7_ch0_analogInValue;
-
-		//Channel 1 parameters
-		double pos_ch1_waveformValue[2000];
-		double vel_ch1_waveformValue[2000];
-		double acc_ch1_waveformValue[2000];
-		double swraw_ch1_analogInValue;
-		double s2wraw_ch1_analogInValue;
-		double swquality_ch1_analogInValue;
-		double s2wquality_ch1_analogInValue;
-
-		//Channel 2 parameters 
-		double pos_ch2_waveformValue[2000];
-		double vel_ch2_waveformValue[2000];
-		double acc_ch2_waveformValue[2000];
-		double swraw_ch2_analogInValue;
-		double s2wraw_ch2_analogInValue;
-		double swquality_ch2_analogInValue;
-		double s2wquality_ch2_analogInValue;
-		//--------------------------
-
-		// --- Output parameters ---
-		//Communication parameters
-		char locator_stringOutValueString[27];
-		unsigned short framerate_longOutValueString;
-		unsigned short frameaggr_mbboValueString;
-		unsigned short bufferaggr_mbboValueString;
-		bool interleaving_boValueString;
-		unsigned short channelindx_mbboValueString;
-		unsigned short datasrcindx_mbboValueString;
-
-		//Adjustment parameters
-		unsigned short workingdistmin_longOutValueString;
-		unsigned short workingdistmax_longOutValueString;
-		//--------------------------
-}
+#include <picoScaledrv.h>
 
 #define MAX_SIGNALS		
 
 PicoScaledrv::PicoScaledrv(const char *portName):
 	asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
-// Interfaces that we implement
-asynInt32Mask | asynUInt32DigitalMask | asynDrvUserMask,
-// Interfaces that do callbacks
-asynUInt32DigitalMask,
-ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1,
-/* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
-0, 0), /* Default priority and stack size */
-			
-			)
+	asynInt32Mask | asynUInt32DigitalMask | asynDrvUserMask,// Interfaces that we implement
+	asynUInt32DigitalMask,	// Interfaces that do callbacks
+	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1,
+	/* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
+	0, 0), /* Default priority and stack size */
+	)
 {
-
+	createParam()
 }
 
 unsigned int picoScale_open(psub)

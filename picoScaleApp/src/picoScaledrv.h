@@ -69,8 +69,8 @@ static const char *driverName = "picoScaledrv";
 #define NUM_MULTIPLE_BIT_OUT	4
 #define NUME_BINARY_OUT		1
 
-#define MAX_SIGNALS	
-
+#define NUM_PARAMS		46
+#define MAX_SIGNALS		1		
 
 class PicoScaledrv : public asynPortDriver {
 	public:
@@ -89,15 +89,15 @@ class PicoScaledrv : public asynPortDriver {
 		//Channel 0 parameters
 		double pos_ch0_waveformValue[2000];
 		double vel_ch0_waveformValue[2000];
-		double acc_ch0_waveformValuev[2000];
+		double acc_ch0_waveformValue[2000];
 		double swraw_ch0_analogInValue;
 		double s2wraw_ch0_analogInValue;
 		double swquality_ch0_analogInValue;
 		double s2wquality_ch0_analogInValue;
 		double cntrZero_ch0_analogInValue;
 		double cntrOne_ch0_analogInValue;
-		double envtemp_ch0_analogInValueString;
-		double envHum_ch0_analogInValueString;
+		double envtemp_ch0_analogInValue;
+		double envHum_ch0_analogInValue;
 		double envPress_ch0_analogInValue;
 		double gpioAdc0_ch0_analogInValue;
 		double gpioAdc1_ch0_analogInValue;
@@ -132,16 +132,16 @@ class PicoScaledrv : public asynPortDriver {
 
 		// --- Output parameters ---
 		//Communication parameters
-		char locator_stringOutValueString[27];
-		unsigned short framerate_longOutValueString;
-		unsigned short frameaggr_mbboValueString;
-		unsigned short bufferaggr_mbboValueString;
-		bool interleaving_boValueString;
-		unsigned short channelindx_mbboValueString;
-		unsigned short datasrcindx_mbboValueString;
+		char locator_stringOutValue[27];
+		unsigned short framerate_longOutValue;
+		unsigned short frameaggr_mbboValue;
+		unsigned short bufferaggr_mbboValue;
+		bool interleaving_boValue;
+		unsigned short channelindx_mbboValue;
+		unsigned short datasrcindx_mbboValue;
 
 		//Adjustment parameters
-		unsigned short workingdistmin_longOutValueString;
-		unsigned short workingdistmax_longOutValueString;
+		unsigned short workingdistmin_longOutValue;
+		unsigned short workingdistmax_longOutValue;
 		//--------------------------
 }

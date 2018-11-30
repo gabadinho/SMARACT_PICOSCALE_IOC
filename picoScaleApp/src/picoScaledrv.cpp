@@ -5,14 +5,11 @@
 #include <picoScale_dataSrc.h>
 #include <picoScaledrv.h>
 
-#define MAX_SIGNALS		
-
 PicoScaledrv::PicoScaledrv(const char *portName):
 	asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
 	asynInt32Mask | asynFloat64Mask | asynFloat64ArrayMask | asynDrvUserMask,// Interfaces that we implement
 	asynInt32Mask | asynFloat64Mask | asynFloat64ArrayMask,	// Interfaces that do callbacks
-	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1,
-	/* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
+	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1, /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
 	0, 0) /* Default priority and stack size */
 {
 	createParam(pos_ch0_waveformValueString, asynParamFloat64Array, &pos_ch0_waveformValue);
@@ -54,11 +51,11 @@ PicoScaledrv::PicoScaledrv(const char *portName):
 	createParam(s2wquality_ch2_analogInValueString, asynParamFloat64, &s2wquality_ch2_analogInValue);
 	createParam(locator_stringOutValueString, asynParamOctet, &locator_stringOutValue);
 	createParam(framerate_longOutValueString, asynParamInt32, &framerate_longOutValue);
-	//createParam(frameaggr_mbboValueString, asynParamInt32, &frameaggr_mbboValue); mbbo value
-	///createParam(bufferaggr_mbboValueString, asynParamInt32, &bufferaggr_mbboValue);
-	//createParam(interleaving_boValueString, asynParamFloat64, &interleaving_boValue); bool value
-	//createParam(channelindx_mbboValueString, asynParamInt32, &channelindx_mbboValue);mbbo value
-	//createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);mbbo value
+	createParam(frameaggr_mbboValueString, asynParamInt32, &frameaggr_mbboValue);
+	createParam(bufferaggr_mbboValueString, asynParamInt32, &bufferaggr_mbboValue);
+	createParam(interleaving_boValueString, asynParamInt32, &interleaving_boValue);
+	createParam(channelindx_mbboValueString, asynParamInt32, &channelindx_mbboValue);
+	createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);
 	createParam(workingdistmin_longOutValueString, asynParamInt32, &workingdistmin_longOutValue);
 	createParam(workingdistmax_longOutValueString, asynParamInt32, &workingdistmax_longOutValue);
 }

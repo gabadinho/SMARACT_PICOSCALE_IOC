@@ -47,7 +47,7 @@ static const char *driverName = "picoScaledrv";
 
 //-------------------------------- Output parameters ---------------------------------
 //Communication parameters
-#define locator_stringOutValueString		"LOCATOR_STRINGOUT_VAL"
+#define ip_stringOutValueString			"IP_STRINGOUT_VAL"
 #define framerate_longOutValueString		"FRAMERATE_LONGOUT_VAL"
 #define frameaggr_mbboValueString		"FRAMEAGGR_MBBO_VAL"
 #define bufferaggr_mbboValueString		"BUFFERAGGR_MBBO_VAL"
@@ -87,9 +87,9 @@ class PicoScaledrv : public asynPortDriver {
 	protected:
 		// --- Input parameters ---
 		//Channel 0 parameters
-		double pos_ch0_waveformValue[2000];
-		double vel_ch0_waveformValue[2000];
-		double acc_ch0_waveformValue[2000];
+		vector<double> pos_ch0_waveformValue[];
+		vector<double> vel_ch0_waveformValue[];
+		vector<double> acc_ch0_waveformValue[];
 		double swraw_ch0_analogInValue;
 		double s2wraw_ch0_analogInValue;
 		double swquality_ch0_analogInValue;
@@ -112,18 +112,18 @@ class PicoScaledrv : public asynPortDriver {
 		double calcSys7_ch0_analogInValue;
 
 		//Channel 1 parameters
-		double pos_ch1_waveformValue[2000];
-		double vel_ch1_waveformValue[2000];
-		double acc_ch1_waveformValue[2000];
+		vector<double> pos_ch1_waveformValue[];
+		vector<double> vel_ch1_waveformValue[];
+		vector<double> acc_ch1_waveformValue[];
 		double swraw_ch1_analogInValue;
 		double s2wraw_ch1_analogInValue;
 		double swquality_ch1_analogInValue;
 		double s2wquality_ch1_analogInValue;
 
 		//Channel 2 parameters 
-		double pos_ch2_waveformValue[2000];
-		double vel_ch2_waveformValue[2000];
-		double acc_ch2_waveformValue[2000];
+		vector<double> pos_ch2_waveformValue[];
+		vector<double> vel_ch2_waveformValue[];
+		vector<double> acc_ch2_waveformValue[];
 		double swraw_ch2_analogInValue;
 		double s2wraw_ch2_analogInValue;
 		double swquality_ch2_analogInValue;
@@ -132,7 +132,7 @@ class PicoScaledrv : public asynPortDriver {
 
 		// --- Output parameters ---
 		//Communication parameters
-		char locator_stringOutValue[27];
+		char ip_stringOutValue[15];
 		unsigned short framerate_longOutValue;
 		unsigned short frameaggr_mbboValue;
 		unsigned short bufferaggr_mbboValue;

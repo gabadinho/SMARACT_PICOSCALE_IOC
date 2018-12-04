@@ -3,21 +3,21 @@
 record(waveform, "$(C):$(P):POS_$(Ch)"){
 	field(DESC, "Position")
 	field(EGU, "nm")
-	field(NELM, "2000")
+	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(C):$(P):VEL_$(Ch)"){
 	field(DESC, "Velocity")
 	field(EGU, "")
-	field(NELM, 2000)
+	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(C):$(P):ACC_$(Ch)"){
 	field(DESC, "Acceleration")
 	field(EGU, "")
-	field(NELM, "2000")
+	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
 }
 

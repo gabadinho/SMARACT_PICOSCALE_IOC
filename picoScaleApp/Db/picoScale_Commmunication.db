@@ -1,6 +1,6 @@
-record(stringout, "$(C):$(P):LOCATOR"){
-	field(DESC, "Device address for connection establishment")
-	field(VAL, "network:$(IP):55555")
+record(stringout, "$(C):$(P):IP"){
+	field(DESC, "Device IP address for connecting")
+	field(VAL, "$(IP")
 	field(PINI, "YES")
 	field(FLNK, "$(C):$(P):OPEN")
 }
@@ -8,7 +8,7 @@ record(stringout, "$(C):$(P):LOCATOR"){
 record(sub, "$(C):$(P):OPEN"){
 	field(DESC, "Establishes connection with PicoScale")
 	field(PINI, "YES")
-	field(INPA, "$(C):$(P):LOCATOR.VAL")
+	field(INPA, "$(C):$(P):IP.VAL")
 	field(SNAM, "picoScale_open")
 }
 
@@ -24,8 +24,15 @@ record(longout, "$(C):$(P):FRAMERATE"){
 	field(PINI, "YES")
 }
 
+#Real operation framerate
+record(sub, "$(C):$(P):OPERATION_FRAMERATE"){
+	field(DESC, "PicoScale current operation framerate")
+	field(VAL, "1")
+	field(EGU, "Hz")
+}
+
 record(mbbo, "$(C):$(P):FRAMEAGGR"){
-	field(DESC, "Frame aggregation")
+	field(DESC, "Frame aggregation accordingly to each framerate range")
 	field(ZRVL, "1")
 	field(ONVL, "2")
 	field(TWVL, "4")
@@ -72,44 +79,44 @@ record(bo, "$(C):$(P):INTERLEAVING"){
 
 record(aSub, "$(C):$(P):STREAM"){
 	field(DESC, "Data streaming of specified data source")
-	field(INPA, "$(C):$(P):CHANNELINDX_$(Ch)")
-	field(INPB, "$(C):$(P):DATASRCINDX_$(Ch)")
+	field(INPA, "$(C):$(P):CHANNELINDX")
+	field(INPB, "$(C):$(P):DATASRCINDX")
 	field(INPC, "$(C):$(P):FRAMERATE")
 	field(SNAM, "picoScale_stream")
 }
 
-#Streaming of specific position/velocity/acceleration datasources (frequency: 2kHz)
+#Streaming of specific position/velocity/acceleration datasources (frequency up to 10MHz)
 record(aSub, "$(C):$(P):STREAM_PVA"){
 	field(DESC, "Data stream of Position/Velocity/Acceleration data sources from all channels")
 	field(INPA, "$(C):$(P):FRAMERATE")
 	field(SNAM, "picoScale_streamPVA")
 	field(OUTA, "$(C):$(P):POS_0")
 	field(FTVA, DOUBLE)
-	field(NOVA, 2000)
+	field(NOVA, 10000000)
 	field(OUTB, "$(C):$(P):VEL_0")
 	field(FTVB, DOUBLE)
-	field(NOVB, 2000)
+	field(NOVB, 10000000)
 	field(OUTC, "$(C):$(P):ACC_0")
 	field(FTVC, DOUBLE)
-	field(NOVC, 2000)
+	field(NOVC, 10000000)
 	field(OUTD, "$(C):$(P):POS_1")
 	field(FTVD, DOUBLE)
-	field(NOVD, 2000)
+	field(NOVD, 10000000)
 	field(OUTE, "$(C):$(P):VEL_1")
 	field(FTVE, DOUBLE)
-	field(NOVE, 2000)
+	field(NOVE, 10000000)
 	field(OUTF, "$(C):$(P):ACC_1")
 	field(FTVF, DOUBLE)
-	field(NOVF, 2000)
+	field(NOVF, 10000000)
 	field(OUTG, "$(C):$(P):POS_2")
 	field(FTVG, DOUBLE)
-	field(NOVG, 2000)
+	field(NOVG, 10000000)
 	field(OUTH, "$(C):$(P):VEL_2")
 	field(FTVH, DOUBLE)
-	field(NOVH, 2000)
+	field(NOVH, 10000000)
 	field(OUTI, "$(C):$(P):ACC_2")
 	field(FTVI, DOUBLE)
-	field(NOVI, 2000)
+	field(NOVI, 10000000)
 }
 
 record(sub, "$(C):$(P):POLL"){

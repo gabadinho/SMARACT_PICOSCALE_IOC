@@ -1,9 +1,9 @@
 #Record for triggering PicoScale position/velocity/acceleration data srcs. streaming
-#record(bi, "$(C):$(P):START"){
-#	field(DESC, "Trigger record")
-#	field(VAL, 0)
-#	field(ZNAM, "Not triggered")
-#	field(ONAM, "Triggered")
-#	field(INPA, )
-#	field(FLNK, "$(C):$(P):STREAM_PVA")	
-#}
+record(bi, "$(C):$(P):START"){
+	field(DESC, "Trigger record")
+	field(VAL, 0)
+	field(ZNAM, "Not triggered")
+	field(ONAM, "Triggered")
+	#field(INPA, ) // waiting for triggering system definition
+	field(FLNK, "$(C):$(P):STREAM_PVA")	
+}

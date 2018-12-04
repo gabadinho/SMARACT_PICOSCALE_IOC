@@ -2,8 +2,9 @@
 #include <registryFunction.h>
 #include <genSubRecord.h>
 #include <asynPortDriver.h>
-#include <picoScale_dataSrc.h>
 #include <picoScaledrv.h>
+#include <picoScale_dataSrc.h>
+#include <picoScale_Stream.h>
 
 PicoScaledrv::PicoScaledrv(const char *portName):
 	asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
@@ -49,7 +50,7 @@ PicoScaledrv::PicoScaledrv(const char *portName):
 	createParam(s2wraw_ch2_analogInValueString, asynParamFloat64, &s2wraw_ch2_analogInValue);
 	createParam(swquality_ch2_analogInValueString, asynParamFloat64, &swquality_ch2_analogInValue);
 	createParam(s2wquality_ch2_analogInValueString, asynParamFloat64, &s2wquality_ch2_analogInValue);
-	createParam(locator_stringOutValueString, asynParamOctet, &locator_stringOutValue);
+	createParam(ip_stringOutValueString, asynParamOctet, &ip_stringOutValue);
 	createParam(framerate_longOutValueString, asynParamInt32, &framerate_longOutValue);
 	createParam(frameaggr_mbboValueString, asynParamInt32, &frameaggr_mbboValue);
 	createParam(bufferaggr_mbboValueString, asynParamInt32, &bufferaggr_mbboValue);
@@ -60,36 +61,46 @@ PicoScaledrv::PicoScaledrv(const char *portName):
 	createParam(workingdistmax_longOutValueString, asynParamInt32, &workingdistmax_longOutValue);
 }
 
-unsigned int picoScale_open(psub)
-	struct subRecord  *psub;
+unsigned int picoScale_open(struct subRecord  *psub)
 {
+	unsigned int result;
     	SA_SI_Handle handle;
-    	return(SA_SI_Open(&handle, ))
+    	result = (SA_SI_Open(&handle, ip_stringOutValue),"");
+
+	if (result != SA_SI_OK)
+    	{
+        	cout << "Could not connect to device. Error " << result << endl;
+        	return result;
+    	}
 }
 
-
-picoScale_close(){
-
-}
-
-picoScale_stream(){
-
-}
-
-picoScale_streamPVA(){
+picoScale_close(subRecord *psub){
 
 }
 
-picoScale_poll(){
+picoScale_stream(genSubRecord *pgenSub){
 
 }
 
-picoScale_adjust(){
+picoScale_streamPVA(genSubRecord *pgenSub){
 
 }
 
+picoScale_poll(subRecord *psub){
 
+}
 
+picoScale_adjust(subRecord *psub){
+// activate manual adjustment phase
+    result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_AF_ADJUSTMENT_STATE_PROP,0,0),SA_PS_ADJUSTMENT_STATE_MANUAL_ADJUST);
+    if (result != SA_SI_OK)
+        return result;
+}
 
+epicsRegisterFunction(picoScale_open);
+epicsRegisterFunction(picoScale_close);
+epicsRegisterFunction(picoScale_stream);
+epicsRegisterFunction(picoScale_streamPVA);
+epicsRegisterFunction(picoScale_poll);
 
 

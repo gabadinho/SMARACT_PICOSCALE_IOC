@@ -144,4 +144,9 @@ class PicoScaledrv : public asynPortDriver {
 		unsigned short workingdistmin_longOutValue;
 		unsigned short workingdistmax_longOutValue;
 		//--------------------------
+
+	private:
+		//PicoScale variables
+		unsigned int result;
+    		SA_SI_Handle handle;
 }

@@ -1,10 +1,19 @@
-#include <subRecord.h>
+//EPICS includes
+#include <recGbl.h>
+#include <alarm.h>
 #include <registryFunction.h>
+#include <subRecord.h>
 #include <genSubRecord.h>
+
+//AsynPortDriver include
 #include <asynPortDriver.h>
+
+
 #include <picoScaledrv.h>
 #include <picoScale_dataSrc.h>
 #include <picoScale_Stream.h>
+
+#include <string>
 
 PicoScaledrv::PicoScaledrv(const char *portName):
 	asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
@@ -63,34 +72,51 @@ PicoScaledrv::PicoScaledrv(const char *portName):
 
 unsigned int picoScale_open(struct subRecord  *psub)
 {
-	unsigned int result;
-    	SA_SI_Handle handle;
-    	result = (SA_SI_Open(&handle, ip_stringOutValue),"");
+	result = (SA_SI_Open(&handle, ip_stringOutValue),"");
 
 	if (result != SA_SI_OK)
     	{
-        	cout << "Could not connect to device. Error " << result << endl;
-        	return result;
+		// = "Could not connect to device. Error " + std::to_string(result);
+		return 1;
     	}
+	else return result;
 }
 
-picoScale_close(subRecord *psub){
+unsigned int picoScale_close(struct subRecord *psub)
+{
+	result = SA_SI_Close(handle);
+	
+	if (result != SA_SI_OK)
+    	{
+		//error
+		return 1;
+    	}
+	else return result;
+}
+
+unsigned int picoScale_stream(genSubRecord *pgenSub){
+	DataSource_t dataSource;
+
+	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP,0,0),&dataSource.dataType,0); 
+	if (result != SA_SI_OK){
+		//error
+		return result;
+	}
+
+	dataSource.dataSize = getDataSize(dataSource.dataType);
+	dataSource.address.channelIndex = pgenSub ->
+	dataSource.address.channelIndex =
+}
+
+unsigned int picoScale_streamPVA(genSubRecord *pgenSub){
 
 }
 
-picoScale_stream(genSubRecord *pgenSub){
+unsigned int picoScale_poll(subRecord *psub){
 
 }
 
-picoScale_streamPVA(genSubRecord *pgenSub){
-
-}
-
-picoScale_poll(subRecord *psub){
-
-}
-
-picoScale_adjust(subRecord *psub){
+unsigned int  picoScale_adjust(subRecord *psub){
 // activate manual adjustment phase
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_AF_ADJUSTMENT_STATE_PROP,0,0),SA_PS_ADJUSTMENT_STATE_MANUAL_ADJUST);
     if (result != SA_SI_OK)
@@ -102,5 +128,5 @@ epicsRegisterFunction(picoScale_close);
 epicsRegisterFunction(picoScale_stream);
 epicsRegisterFunction(picoScale_streamPVA);
 epicsRegisterFunction(picoScale_poll);
-
+epicsRegisterFunction(picoScale_adjust);
 

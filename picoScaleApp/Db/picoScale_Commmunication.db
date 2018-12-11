@@ -29,6 +29,8 @@ record(sub, "$(C):$(P):OPERATION_FRAMERATE"){
 	field(DESC, "PicoScale current operation framerate")
 	field(VAL, "1")
 	field(EGU, "Hz")
+	field(INPA, "$(C):$(P):FRAMERATE.VAL")
+	field(PINI, "YES")
 }
 
 record(mbbo, "$(C):$(P):FRAMEAGGR"){
@@ -77,16 +79,18 @@ record(bo, "$(C):$(P):INTERLEAVING"){
 	field(ONST, "Enabled")
 }
 
-record(aSub, "$(C):$(P):STREAM"){
+record(genSub, "$(C):$(P):STREAM"){
 	field(DESC, "Data streaming of specified data source")
 	field(INPA, "$(C):$(P):CHANNELINDX")
+	field(FTA,  "LONG")
 	field(INPB, "$(C):$(P):DATASRCINDX")
+	field(FTB,  "LONG")
 	field(INPC, "$(C):$(P):FRAMERATE")
 	field(SNAM, "picoScale_stream")
 }
 
 #Streaming of specific position/velocity/acceleration datasources (frequency up to 10MHz)
-record(aSub, "$(C):$(P):STREAM_PVA"){
+record(genSub, "$(C):$(P):STREAM_PVA"){
 	field(DESC, "Data stream of Position/Velocity/Acceleration data sources from all channels")
 	field(INPA, "$(C):$(P):FRAMERATE")
 	field(SNAM, "picoScale_streamPVA")

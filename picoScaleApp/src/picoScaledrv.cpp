@@ -1,7 +1,10 @@
+#include <string>
+
 //EPICS includes
 #include <recGbl.h>
 #include <alarm.h>
 #include <registryFunction.h>
+#include <epicsExport.h>
 #include <subRecord.h>
 #include <genSubRecord.h>
 
@@ -12,8 +15,6 @@
 #include <picoScaledrv.h>
 #include <picoScale_dataSrc.h>
 #include <picoScale_Stream.h>
-
-#include <string>
 
 PicoScaledrv::PicoScaledrv(const char *portName):
 	asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
@@ -86,12 +87,86 @@ unsigned int picoScale_close(struct subRecord *psub)
 {
 	result = SA_SI_Close(handle);
 	
-	if (result != SA_SI_OK)
-    	{
+	if (result != SA_SI_OK){
 		//error
 		return 1;
     	}
 	else return result;
+}
+
+unsigned int picoScale_setFramerate(struct subRecord *psub)
+{
+	streamConfig.frameRate = (int32_t) psub->a;
+
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_RATE_PROP,0,0), streamConfig.frameRate);
+	
+	if (result != SA_SI_OK){
+		//error
+		return 1;
+    	}
+	
+	double value;
+	result = SA_SI_GetProperty_f64(handle, SA_SI_EPK(SA_SI_PRECISE_FRAME_RATE_PROP,0,0),&value,0); //the real operation framerate set by picoScale
+    	
+	if (result != SA_SI_OK){
+		//error
+        	return 1;
+    	}
+
+	psub->val = value;
+	
+	//frame aggregation based on framerate accordingly to the Programming guide
+	switch(value){
+		case 1:
+		case 2:
+		case 4:
+		case 9:
+		case 19:
+		case 38:
+			streamConfig.frameAggregation = (int32_t) 1;
+		break;
+		case 76:
+			streamConfig.frameAggregation = (int32_t) 1;
+		break;
+		case 152:
+			streamConfig.frameAggregation = (int32_t) 4;
+		break;
+		case 305:
+			streamConfig.frameAggregation = (int32_t) 8;
+		break;
+		case 610:
+			streamConfig.frameAggregation = (int32_t) 16;
+		break;
+		case 1.22:
+			streamConfig.frameAggregation = (int32_t) 32;
+		break;
+		case 2.44:
+			streamConfig.frameAggregation = (int32_t) 64;
+		break;
+		case 4.88:
+			streamConfig.frameAggregation = (int32_t) 128;
+		break;
+		case 9.77:
+			streamConfig.frameAggregation = (int32_t) 256;
+		break;
+		case 19.53:
+			streamConfig.frameAggregation = (int32_t) 512;
+		break;
+		case 625:
+		case 312.5:
+		case 156.25:
+		case 78.13:
+		case 39.06:
+			streamConfig.frameAggregation = (int32_t) 1024;
+		break;
+		case 10:
+		case 5:
+		case 2.5:
+		case 1.25:
+			streamConfig.frameAggregation = (int32_t) 1024;
+		break;
+	}
+	return result;
 }
 
 unsigned int picoScale_stream(genSubRecord *pgenSub){

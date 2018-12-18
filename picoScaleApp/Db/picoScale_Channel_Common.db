@@ -9,14 +9,14 @@ record(waveform, "$(C):$(P):POS_$(Ch)"){
 
 record(waveform, "$(C):$(P):VEL_$(Ch)"){
 	field(DESC, "Velocity")
-	field(EGU, "")
+	field(EGU, "m/s")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
 }
 
 record(waveform, "$(C):$(P):ACC_$(Ch)"){
 	field(DESC, "Acceleration")
-	field(EGU, "")
+	field(EGU, "m/s^2")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
 }

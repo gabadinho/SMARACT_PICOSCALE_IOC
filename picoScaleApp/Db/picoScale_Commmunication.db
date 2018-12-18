@@ -1,6 +1,6 @@
 record(stringout, "$(C):$(P):IP"){
 	field(DESC, "Device IP address for connecting")
-	field(VAL, "$(IP")
+	field(VAL, "$(IP)")
 	field(PINI, "YES")
 	field(FLNK, "$(C):$(P):OPEN")
 }
@@ -17,48 +17,15 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
-record(longout, "$(C):$(P):FRAMERATE"){
-	field(DESC, "Rate for data src. streaming")
-	field(VAL, "1")
-	field(EGU, "Hz")
-	field(PINI, "YES")
-}
-
 #Real operation framerate
 record(sub, "$(C):$(P):OPERATION_FRAMERATE"){
 	field(DESC, "PicoScale current operation framerate")
 	field(VAL, "1")
 	field(EGU, "Hz")
-	field(INPA, "$(C):$(P):FRAMERATE.VAL")
+	field(HOPR, "10000000")
+	field(LOPR, "1")
 	field(PINI, "YES")
-}
-
-record(mbbo, "$(C):$(P):FRAMEAGGR"){
-	field(DESC, "Frame aggregation accordingly to each framerate range")
-	field(ZRVL, "1")
-	field(ONVL, "2")
-	field(TWVL, "4")
-	field(TRVL, "8")
-	field(FRVL, "16")
-	field(FVVL, "32")
-	field(SXVL, "64")
-	field(SVVL, "128")
-	field(EIVL, "256")
-	field(NIVL, "512")
-	field(TEVL, "1024")
-	field(ELVL, "1024")
-	field(ZRST, "38 / 19 / 9 / 4 / 2 / 1 Hz")
-	field(ONST, "76 Hz")
-	field(TWST, "152 Hz")
-	field(THST, "305 Hz")
-	field(FRST, "610 Hz")
-	field(FVST, "1.22 kHz")
-	field(SXST, "2.44 kHz")
-	field(SVST, "4.88 kHz")
-	field(EIST, "9.77 kHz")
-	field(NIST, "19.53 kHz")
-	field(TEST, "625 / 312.5 / 156.25 / 78.13 / 39.06 kHz")
-	field(ELST, "10 / 5 / 2.5 / 1.25 MHz")
+	field(SNAM, "picoScale_setFramerate")
 }
 
 record(mbbo, "$(C):$(P):BUFFERAGGR"){

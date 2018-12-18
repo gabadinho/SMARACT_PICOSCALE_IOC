@@ -77,12 +77,13 @@ class PicoScaledrv : public asynPortDriver {
 		PicoScaledrv(const char *portName);
 
 		//SmarAct library calls
-		virtual unsigned int picoScale_open(subRecord *psub);
-		virtual unsigned int picoScale_close(subRecord *psub);
+		virtual unsigned int picoScale_open(struct subRecord *psub);
+		virtual unsigned int picoScale_close(struct ubRecord *psub);
+		virtual unsigned int picoScale_setFramerate(struct subRecord *psub){
 		virtual unsigned int picoScale_stream(genSubRecord *pgenSub);
 		virtual unsigned int picoScale_streamPVA(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_poll(subRecord *psub);
-		virtual unsigned int picoScale_adjust(subRecord *psub);
+		virtual unsigned int picoScale_poll(struct subRecord *psub);
+		virtual unsigned int picoScale_adjust(struct subRecord *psub);
 		
 	protected:
 		// --- Input parameters ---

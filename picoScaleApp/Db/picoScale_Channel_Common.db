@@ -5,6 +5,7 @@ record(waveform, "$(C):$(P):POS_$(Ch)"){
 	field(EGU, "nm")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
+	field(OUT, "@asyn ($(PORT), $(ADDR))POS_$(Ch)_WAVEFORM_VAL")
 }
 
 record(waveform, "$(C):$(P):VEL_$(Ch)"){
@@ -12,6 +13,7 @@ record(waveform, "$(C):$(P):VEL_$(Ch)"){
 	field(EGU, "m/s")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
+	field(OUT, "@asyn ($(PORT), $(ADDR))VEL_$(Ch)_WAVEFORM_VAL")
 }
 
 record(waveform, "$(C):$(P):ACC_$(Ch)"){
@@ -19,26 +21,31 @@ record(waveform, "$(C):$(P):ACC_$(Ch)"){
 	field(EGU, "m/s^2")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
+	field(OUT, "@asyn ($(PORT), $(ADDR))ACC_$(Ch)_WAVEFORM_VAL")
 }
 
 record(ai, "$(C):$(P):SWRAW_$(Ch)"){
 	field(DESC, "Sine raw")
 	field(DTYPE, "Soft Channel")
+	field(OUT, "@asyn ($(PORT), $(ADDR))SWRAW_$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):S2WRAW_$(Ch)"){
 	field(DESC, "Cosine raw")
 	field(DTYPE, "Soft Channel")
+	field(OUT, "@asyn ($(PORT), $(ADDR))S2WRAW_$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):SWQUALITY_$(Ch)"){
 	field(DESC, "Sine quality")
 	field(DTYPE, "Soft Channel")
+	field(OUT, "@asyn ($(PORT), $(ADDR))SWQUALITY_$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):S2WQUALITY_$(Ch)"){
 	field(DESC, "Cosine quality")
 	field(DTYPE, "Soft Channel")
+	field(OUT, "@asyn ($(PORT), $(ADDR))S2WQUALITY_$(Ch)_ANALOGIN_VAL")
 }
 
 

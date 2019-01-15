@@ -1,11 +1,13 @@
 #include "SmarActSI.h"
 #include "SmarActSIConstants_PS.h"
 
+/*
 struct DataSourceDescription_t {
     int32_t componentID;
     int32_t componentIndex;
     int32_t dataSourceType;
 };
+*/
 
 struct DataSourceAddress_t {
     uint8_t channelIndex;
@@ -16,16 +18,6 @@ struct DataSource_t {
     DataSourceAddress_t address;
     int32_t dataType;
     int32_t dataSize;
-};
-
-struct StreamConfig_t {
-    vector<DataSource_t> enabledDataSources;
-    int32_t frameSize;
-    bool interleavingEnabled;
-    int32_t frameAggregation;
-    int32_t streamBufferAggregation;
-    int32_t frameRate;
-    int32_t numberOfStreamBuffers;
 };
 
 // A union to store different types in one variable
@@ -48,13 +40,6 @@ union VariantValue
 struct DataSourceData_t {
     vector<VariantValue> data;
 };
-
-struct StreamData_t {
-    vector<DataSourceData_t> dataSource;
-};
-
-StreamConfig_t streamConfig;		// stores the stream configuration
-StreamData_t streamData;		// stores the stream data received from the device
 
 int32_t getDataSize(int32_t dataType)
 {
@@ -85,6 +70,7 @@ int32_t getDataSize(int32_t dataType)
     return 0;   // shouldn't happen
 }
 
+/*
 void appendValue(unsigned int dataSource, void *pValue)
 {
     VariantValue v;
@@ -145,3 +131,4 @@ void appendValue(unsigned int dataSource, void *pValue)
     }
     streamData.dataSource[dataSource].data.push_back(v);
 }
+*/

@@ -1,7 +1,8 @@
 record(stringout, "$(C):$(P):IP"){
 	field(DESC, "Device IP address for connecting")
-	field(VAL, "$(IP)")
+	field(VAL, "$(ADDR)")
 	field(PINI, "YES")
+	field(OUT, "@asyn ($(PORT), $(ADDR))IP_STRINGOUT_VAL")
 	field(FLNK, "$(C):$(P):OPEN")
 }
 
@@ -17,33 +18,52 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
-#Real operation framerate
-record(sub, "$(C):$(P):OPERATION_FRAMERATE"){
+
+record(longout, "$(C):$(P):FRAMERATE"){
 	field(DESC, "PicoScale current operation framerate")
-	field(VAL, "1")
+	field(VAL, "1")	
 	field(EGU, "Hz")
 	field(HOPR, "10000000")
 	field(LOPR, "1")
 	field(PINI, "YES")
+	field(FLNK, "$(C):$(P):SET_FRAMERATE")
+}
+
+record(sub, "$(C):$(P):SET_FRAMERATE"){
+	field(INPA, "$(C):$(P):FRAMERATE.VAL")
 	field(SNAM, "picoScale_setFramerate")
+}
+
+record(longout, "$(C):$(P):BUFFERS"){
+	field(DESC, "Number of stream buffers")
+	field(VAL, "2")
+	field(PINI, "YES")
+	field(LOPR, "2")
+	field(HOPR, "256")
+	field(OUT, "@asyn ($(PORT), $(ADDR))BUFFERSNUM_LONGOUT_VAL")
 }
 
 record(mbbo, "$(C):$(P):BUFFERAGGR"){
 	field(DESC, "Stream buffer aggregation")
+	field(VAL, "0")
 	field(ZRVL, "0")
-	field(TWVL, "32")
-	field(THVL, "48")
-	field(FRVL, "64")
-	field(FVVL, "96")
-	field(SXVL, "128")
+	field(ONVL, "32")
+	field(TWVL, "64")
+	field(THVL, "128")
+	field(FRVL, "256")
+	field(FVVL, "512")
+	field(SXVL, "1024")
+	field(PINI, "YES")
+	field(OUT, "@asyn ($(PORT), $(ADDR))BUFFERAGGR_MBBO_VAL")
 }
 
 record(bo, "$(C):$(P):INTERLEAVING"){
 	field(DESC, "Interleaved mode")
-	field(ZRVL, "0")
-	field(ONVL, "1")
-	field(ZRST, "Disabled")
-	field(ONST, "Enabled")
+	field(VAL, "1")
+	field(ZNAM, "Disabled")
+	field(ONAM, "Enabled")
+	field(PINI, "YES")
+	field(OUT, "@asyn ($(PORT), $(ADDR))INTERLEAVING_BO_VAL")
 }
 
 record(genSub, "$(C):$(P):STREAM"){
@@ -53,7 +73,15 @@ record(genSub, "$(C):$(P):STREAM"){
 	field(INPB, "$(C):$(P):DATASRCINDX")
 	field(FTB,  "LONG")
 	field(INPC, "$(C):$(P):FRAMERATE")
+	field(FTC, "LONG")
 	field(SNAM, "picoScale_stream")
+	field(OUTA, "$(C):$(P):STREAMDATA.VAL")
+}
+
+record(waveform, "$(C):$(P):STREAMDATA"){
+	field(DESC, "Received stream data")
+	field(NELM, "10000000")
+	field(FTVL, "DOUBLE")
 }
 
 #Streaming of specific position/velocity/acceleration datasources (frequency up to 10MHz)
@@ -105,6 +133,7 @@ record(mbbo, "$(C):$(P):CHANNELINDX"){
 	field(ZRST, "Channel 0")
 	field(ONST, "Channel 1")
 	field(TWVL, "Channel 2")
+	field(OUT, "@asyn ($(PORT), $(ADDR))CHANNELINDX_MBBO_VAL")
 }
 
 record(mbbo, "$(C):$(P):DATASRCINDX"){
@@ -127,6 +156,7 @@ record(mbbo, "$(C):$(P):DATASRCINDX"){
 	field(SXST, "S2w")
 	field(SVST, "SwQuality")
 	field(EIST, "S2wQuality")
+	field(OUT, "@asyn ($(PORT), $(ADDR))DATASRCINDX_MBBO_VAL")
 }
 
 

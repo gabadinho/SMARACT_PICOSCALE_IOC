@@ -6,7 +6,7 @@
 using namespace std;
 
 string locator("network:10.0.9.108:55555");
-
+/*
 struct DataSourceDescription_t {
     int32_t componentID;
     int32_t componentIndex;
@@ -116,7 +116,7 @@ void writesFile_positionxtime()
     	}
 	fclose(fp);
 }
-*/
+
 int32_t getDataSize(int32_t dataType)
 {
     switch (dataType)
@@ -411,7 +411,7 @@ int main(int argc, char* argv[]){
 	if (result != SA_SI_OK){
 		cout << "if 4";
         	return result;
-	}
+	}*/
 	bool lastFrame = false;
 	receiveStreamBuffer(handle,20000,lastFrame);
 	/*

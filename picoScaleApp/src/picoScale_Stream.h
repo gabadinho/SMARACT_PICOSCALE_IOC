@@ -1,46 +1,47 @@
+struct StreamConfig_t {
+    vector<DataSource_t> enabledDataSources;
+    int32_t frameSize;
+    bool interleavingEnabled;
+    int32_t frameAggregation;
+    int32_t streamBufferAggregation;
+    int32_t frameRate;
+    int32_t numberOfStreamBuffers;
+};
+
+struct StreamData_t {
+    vector<DataSourceData_t> dataSource;
+};
+
+StreamConfig_t streamConfig;		// stores the stream configuration
+StreamData_t streamData;		// stores the stream data received from the device
+
 unsigned int configureStream(SA_SI_Handle handle)
 {
-    unsigned int result;
     // prepare stream data container for received data
     //streamData.dataSource.resize(streamConfig.enabledDataSources.size());
     // configure frame aggregation
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_AGGREGATION_PROP,0,0),streamConfig.frameAggregation);
     if (result != SA_SI_OK){
-	cout << "cond 1";
         return result;
     }
     // configure frame rate
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_RATE_PROP,0,0),streamConfig.frameRate);
     if (result != SA_SI_OK){
-         cout << "cond 2";
 	 return result;
     }
-    // read back actual frame rate
-    cout << "Frame rate is ";
-    double value;
-    result = SA_SI_GetProperty_f64(handle, SA_SI_EPK(SA_SI_PRECISE_FRAME_RATE_PROP,0,0),&value,0);
-    if (result != SA_SI_OK){
-	cout << "cond 3";
-        return result;
-    }
-    cout << value << "Hz" << endl;
     // configure stream buffer aggregation
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMBUFFER_AGGREGATION_PROP,0,0),streamConfig.streamBufferAggregation);
     if (result != SA_SI_OK){
-	cout << result;
-	cout << "cond 4";
         return result;
     }
     // configure interleaving
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMBUFFERS_INTERLEAVED_PROP,0,0),streamConfig.interleavingEnabled);
     if (result != SA_SI_OK){
-           cout << "cond 5";
 	   return result;
     }
     // configure number of stream buffers
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_NUMBER_OF_STREAMBUFFERS_PROP,0,0),streamConfig.numberOfStreamBuffers);
     if (result != SA_SI_OK){
-	cout << "cond 6";
         return result;
     }
     return SA_SI_OK;

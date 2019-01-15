@@ -6,6 +6,7 @@ record(longout, "$(C):$(P):WORKINGDIST_MIN"){
 	field(EGU, "mm")
 	field(LOPR, "1")
 	field(HIPR, "500")
+	field(OUT, "@asyn ($(PORT), $(ADDR))WORKINGDISTMIN_LONGOUT_VAL")
 }
 
 record(longout, "$(C):$(P):WORKINGDIST_MAX"){
@@ -14,10 +15,11 @@ record(longout, "$(C):$(P):WORKINGDIST_MAX"){
 	field(EGU, "mm")
 	field(LOPR, "1")
 	field(HIPR, "500")
+	field(OUT, "@asyn ($(PORT), $(ADDR))WORKINGDISTMAX_LONGOUT_VAL")
 }
 
 record(sub, "$(C):$(P):ADJUST"){
-	field(DESC, "Manual and auto adjustmment routine")
+	field(DESC, "Adjustmment routine")
 	field(INPA, "$(C):$(P):WORKINGDIST_MIN_$(Ch)")
 	field(INPB, "$(C):$(P):WORKINGDIST_MAX_$(Ch)")
 	field(INPC, "$(C):$(P):CHANNELINDX")

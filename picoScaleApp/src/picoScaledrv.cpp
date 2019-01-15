@@ -64,6 +64,7 @@ PicoScaledrv::PicoScaledrv(const char *portName):
 	createParam(framerate_longOutValueString, asynParamInt32, &framerate_longOutValue);
 	createParam(frameaggr_mbboValueString, asynParamInt32, &frameaggr_mbboValue);
 	createParam(bufferaggr_mbboValueString, asynParamInt32, &bufferaggr_mbboValue);
+	createParam(buffersnum_longOutValueString, asynParamInt32, &buffersnum_longOutValue);
 	createParam(interleaving_boValueString, asynParamInt32, &interleaving_boValue);
 	createParam(channelindx_mbboValueString, asynParamInt32, &channelindx_mbboValue);
 	createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);
@@ -113,7 +114,10 @@ unsigned int picoScale_setFramerate(struct subRecord *psub)
         	return 1;
     	}
 
-	psub->val = value;
+	setIntegerParam(framerate_longOutValue, value);
+	streamConfig.frameRate = value;
+
+	callParamCallbacks();
 	
 	//frame aggregation based on framerate accordingly to the Programming guide
 	switch(value){
@@ -169,26 +173,170 @@ unsigned int picoScale_setFramerate(struct subRecord *psub)
 	return result;
 }
 
-unsigned int picoScale_stream(genSubRecord *pgenSub){
+unsigned int picoScale_stream(genSubRecord *pgenSub){ //method for streaming a single datasource. Interleaved mode is true here, by default
 	DataSource_t dataSource;
+	bool lastFrame = false;
 
-	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP,0,0),&dataSource.dataType,0); 
+	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, channelindx_mbboValue, datasrcindx_mbboValue),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
 		//error
 		return result;
 	}
 
 	dataSource.dataSize = getDataSize(dataSource.dataType);
-	dataSource.address.channelIndex = pgenSub ->
-	dataSource.address.channelIndex =
+	dataSource.address.channelIndex = channelindx_mbboValue;
+	dataSource.address.dataSourceIndex = datasrcindx_mbboValue;
+	
+	streamConfig.interleavingEnabled = interleaving_boValue;
+    	//streamConfig.frameAggregation = 
+    	streamConfig.streamBufferAggregation = bufferaggr_mbboValue;
+    	//streamConfig.frameRate = 
+    	streamConfig.numberOfStreamBuffers = buffersnum_longOutValue;
+        streamConfig.frameSize = dataSource.dataSize;
+
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = configureStream(handle);
+    	if (result != SA_SI_OK){
+		return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+    	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}	
+	
+	while (!lastFrame)
+    	{
+		result = receiveStreamBuffer(handle,2000,lastFrame);
+		if (result != SA_SI_OK)
+		    return result;
+    	}
+
+	return SA_SI_OK;	
 }
 
-unsigned int picoScale_streamPVA(genSubRecord *pgenSub){
+unsigned int picoScale_streamPVA(genSubRecord *pgenSub){//method for streaming position/velocity/acceleration measurements from all channels
+	bool lastFrame = false;
 
+	streamConfig.interleavingEnabled = interleaving_boValue;
+    	//streamConfig.frameAggregation = 
+    	streamConfig.streamBufferAggregation = bufferaggr_mbboValue;
+    	//streamConfig.frameRate = 
+    	streamConfig.numberOfStreamBuffers = buffersnum_longOutValue;
+
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,1),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,2),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,1),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,2),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,1),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,2),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+
+	result = configureStream(handle);
+    	if (result != SA_SI_OK){
+		return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+    	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}	
+	
+	while (!lastFrame)
+    	{
+		result = receiveStreamBuffer(handle,2000,lastFrame);
+		if (result != SA_SI_OK)
+		    return result;
+    	}
+
+	return SA_SI_OK;	
+}
+
+unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub){//method for streaming position measurements from all (3) channels
+	bool lastFrame = false;
+	
+	streamConfig.interleavingEnabled = interleaving_boValue;
+    	//streamConfig.frameAggregation = 
+    	streamConfig.streamBufferAggregation = bufferaggr_mbboValue;
+    	//streamConfig.frameRate = 
+    	streamConfig.numberOfStreamBuffers = buffersnum_longOutValue;
+
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,0),SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+
+	result = configureStream(handle);
+    	if (result != SA_SI_OK){
+		return result;
+	}
+	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
+	if (result != SA_SI_OK){
+        	return result;
+	}
+    	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
+	if (result != SA_SI_OK){
+        	return result;
+	}	
+	
+	while (!lastFrame)
+    	{
+		result = receiveStreamBuffer(handle,2000,lastFrame);
+		if (result != SA_SI_OK)
+		    return result;
+    	}
+
+	return SA_SI_OK;	
 }
 
 unsigned int picoScale_poll(subRecord *psub){
-
+	
 }
 
 unsigned int  picoScale_adjust(subRecord *psub){
@@ -200,8 +348,10 @@ unsigned int  picoScale_adjust(subRecord *psub){
 
 epicsRegisterFunction(picoScale_open);
 epicsRegisterFunction(picoScale_close);
+epicsRegisterFunction(picoScale_setFramerate);
 epicsRegisterFunction(picoScale_stream);
 epicsRegisterFunction(picoScale_streamPVA);
+epicsRegisterFunction(picoScale_streamPosition_allChannels);
 epicsRegisterFunction(picoScale_poll);
 epicsRegisterFunction(picoScale_adjust);
 

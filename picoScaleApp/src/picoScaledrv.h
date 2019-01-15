@@ -49,8 +49,8 @@ static const char *driverName = "picoScaledrv";
 //Communication parameters
 #define ip_stringOutValueString			"IP_STRINGOUT_VAL"
 #define framerate_longOutValueString		"FRAMERATE_LONGOUT_VAL"
-#define frameaggr_mbboValueString		"FRAMEAGGR_MBBO_VAL"
 #define bufferaggr_mbboValueString		"BUFFERAGGR_MBBO_VAL"
+#define buffersnum_longOutValueString		"BUFFERSNUM_LONGOUT_VAL"
 #define interleaving_boValueString		"INTERLEAVING_BO_VAL"
 #define channelindx_mbboValueString		"CHANNELINDX_MBBO_VAL"
 #define datasrcindx_mbboValueString		"DATASRCINDX_MBBO_VAL"
@@ -82,6 +82,7 @@ class PicoScaledrv : public asynPortDriver {
 		virtual unsigned int picoScale_setFramerate(struct subRecord *psub){
 		virtual unsigned int picoScale_stream(genSubRecord *pgenSub);
 		virtual unsigned int picoScale_streamPVA(genSubRecord *pgenSub);
+		virtual unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub);
 		virtual unsigned int picoScale_poll(struct subRecord *psub);
 		virtual unsigned int picoScale_adjust(struct subRecord *psub);
 		
@@ -135,8 +136,8 @@ class PicoScaledrv : public asynPortDriver {
 		//Communication parameters
 		char ip_stringOutValue[15];
 		unsigned short framerate_longOutValue;
-		unsigned short frameaggr_mbboValue;
 		unsigned short bufferaggr_mbboValue;
+		unsigned short buffersnum_longOutValue;
 		bool interleaving_boValue;
 		unsigned short channelindx_mbboValue;
 		unsigned short datasrcindx_mbboValue;

@@ -1,0 +1,8 @@
+function(picoScale_open)
+function(picoScale_close)
+function(picoScale_setFramerate)
+function(picoScale_stream)
+function(picoScale_streamPVA_allChannels)
+function(picoScale_streamPosition_allChannels)
+function(picoScale_poll)
+function(picoScale_adjust)

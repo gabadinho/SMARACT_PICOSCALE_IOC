@@ -19,8 +19,11 @@ DBD += picoScale.dbd
 picoScale_DBD += base.dbd
 picoScale_DBD += asyn.dbd
 picoScale_DBD += drvAsynIPPort.dbd
+picoScale_DBD += genSubRecord.dbd
+picoScale_DBD += picoScale.dbd
 
 # picoScale_registerRecordDeviceDriver.cpp derives from picoScale.dbd
+picoScale_SRCS += picoScaledrv.cpp
 picoScale_SRCS += picoScale_registerRecordDeviceDriver.cpp
 
 # Build the main IOC entry point where needed

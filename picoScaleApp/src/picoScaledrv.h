@@ -76,16 +76,6 @@ class PicoScaledrv : public asynPortDriver {
 	public:
 		PicoScaledrv(const char *portName);
 
-		//SmarAct library calls
-		virtual unsigned int picoScale_open(struct subRecord *psub);
-		virtual unsigned int picoScale_close(struct ubRecord *psub);
-		virtual unsigned int picoScale_setFramerate(struct subRecord *psub){
-		virtual unsigned int picoScale_stream(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_streamPVA(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_poll(struct subRecord *psub);
-		virtual unsigned int picoScale_adjust(struct subRecord *psub);
-		
 	protected:
 		// --- Input parameters ---
 		//Channel 0 parameters
@@ -146,9 +136,23 @@ class PicoScaledrv : public asynPortDriver {
 		unsigned short workingdistmin_longOutValue;
 		unsigned short workingdistmax_longOutValue;
 		//--------------------------
-
-	private:
-		//PicoScale variables
-		unsigned int result;
-    		SA_SI_Handle handle;
 }
+
+//Globals
+PicoScaledrv picoScaledrv;
+unsigned int result;
+SA_SI_Handle handle;
+const SA_SI_DataBuffer *pBuffer;
+DataSource_t *dataSourceP0, *dataSourceV0, *dataSourceA0, *dataSourceP1, *dataSourceV1, *dataSourceA1, *dataSourceP2, *dataSourceV2, *dataSourceA2;
+vector<int32_t> streamPVA_allchannels_datasrcs_sizes, streamPosition_allchannels_datasrcs_sizes;
+int32_t streamPVA_allchannels_frame_size = 0, streamPosition_allchannels_frame_size = 0;
+
+//SmarAct library calls
+unsigned int picoScale_open(struct subRecord *psub);
+unsigned int picoScale_close(struct ubRecord *psub);
+unsigned int picoScale_setFramerate(struct subRecord *psub){
+unsigned int picoScale_stream(genSubRecord *pgenSub);
+unsigned int picoScale_streamPVA_allChannels(genSubRecord *pgenSub);
+unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub);
+unsigned int picoScale_poll(struct subRecord *psub);
+unsigned int picoScale_adjust(struct subRecord *psub);

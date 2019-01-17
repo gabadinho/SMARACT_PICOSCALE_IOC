@@ -118,6 +118,13 @@ record(genSub, "$(C):$(P):STREAM_PVA"){
 	field(NOVI, 10000000)
 }
 
+record(bo, "$(C):$(P):STREAM_STATUS"){
+	field(DESC, "Stream Active/Inactive")
+	field(VAL, "0")
+	field(ZNAM, "Stream inactive")
+	field(ONAM, "Stream active")
+}
+
 record(sub, "$(C):$(P):POLL"){
 	field(DESC, "Polling of specified data source")
 	field(INPA, "$(C):$(P):CHANNELINDX_$(Ch)")

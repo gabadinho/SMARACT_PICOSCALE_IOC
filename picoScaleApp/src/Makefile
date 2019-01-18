@@ -4,13 +4,16 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS BELOW HERE 
 
+USR_LDFLAGS += libftchipid libftd2xx.so.1.4.6
+USR_LDFLAGS += libsmaractio.so.2.0.3 libsmaractsi.so.2.0.8
+
 # Build the IOC application
 PROD_IOC = picoScale
 
-picoScale_LIBS += libftchipid.so
-picoScale_LIBS += libftd2xx.so.1.4.6
-picoScale_LIBS += libsmaractio.so.2.0.3
-picoScale_LIBS += libsmaractsi.so.2.0.8
+#picoScale_LIBS += libftchipid.so
+#picoScale_LIBS += libftd2xx.so.1.4.6
+#picoScale_LIBS += libsmaractio.so.2.0.3
+#picoScale_LIBS += libsmaractsi.so.2.0.8
 
 # picoScale.dbd will be created and installed
 DBD += picoScale.dbd

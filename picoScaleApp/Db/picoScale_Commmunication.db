@@ -18,6 +18,12 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
+record(bo, "$(C):$(P):CONNECTION_STATUS"){
+	field(DESC, "Connected/Not Connected")
+	field(VAL, "0")
+	field(ZNAM, "Not Connected")
+	field(ONAM, "Connected")
+}
 
 record(longout, "$(C):$(P):FRAMERATE"){
 	field(DESC, "PicoScale current operation framerate")

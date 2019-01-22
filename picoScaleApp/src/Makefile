@@ -4,16 +4,13 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS BELOW HERE 
 
-USR_LDFLAGS += libftchipid libftd2xx.so.1.4.6
-USR_LDFLAGS += libsmaractio.so.2.0.3 libsmaractsi.so.2.0.8
-
 # Build the IOC application
 PROD_IOC = picoScale
 
-#picoScale_LIBS += libftchipid.so
-#picoScale_LIBS += libftd2xx.so.1.4.6
-#picoScale_LIBS += libsmaractio.so.2.0.3
-#picoScale_LIBS += libsmaractsi.so.2.0.8
+picoScale_SYS_LIBS += ftchipid
+picoScale_SYS_LIBS += ftd2xx
+picoScale_SYS_LIBS += smaractio
+picoScale_SYS_LIBS += smaractsi
 
 # picoScale.dbd will be created and installed
 DBD += picoScale.dbd
@@ -24,6 +21,8 @@ picoScale_DBD += asyn.dbd
 picoScale_DBD += drvAsynIPPort.dbd
 picoScale_DBD += genSubRecord.dbd
 picoScale_DBD += picoScale.dbd
+
+picoScale_LIBS += asyn genSub
 
 # picoScale_registerRecordDeviceDriver.cpp derives from picoScale.dbd
 picoScale_SRCS += picoScaledrv.cpp
@@ -38,8 +37,7 @@ picoScale_SRCS_vxWorks += -nil-
 
 #Finally link IOC to the EPICS Base libraries
 picoScale_LIBS += $(EPICS_BASE_IOC_LIBS)
-
 include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD EXTRA GNUMAKE RULES BELOW HERE
-
+#

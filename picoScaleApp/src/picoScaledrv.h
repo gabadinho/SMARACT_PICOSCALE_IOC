@@ -46,16 +46,19 @@
 //-------------------------------- Output parameters ---------------------------------
 //Communication parameters
 #define ip_stringOutValueString			"IP_STRINGOUT_VAL"
+#define fullaccess_binaryOutValueString		"FULLACCESS_BINARYOUTVAL"
+#define connectionStatus_binaryOutValueString	"CONNECTIONSTATUS_BINARYOUTVAL"
 #define framerate_longOutValueString		"FRAMERATE_LONGOUT_VAL"
 #define bufferaggr_mbboValueString		"BUFFERAGGR_MBBO_VAL"
 #define buffersnum_longOutValueString		"BUFFERSNUM_LONGOUT_VAL"
-#define interleaving_boValueString		"INTERLEAVING_BO_VAL"
+#define interleaving_binaryOutValueString	"INTERLEAVING_BINARYOUT_VAL"
 #define channelindx_mbboValueString		"CHANNELINDX_MBBO_VAL"
 #define datasrcindx_mbboValueString		"DATASRCINDX_MBBO_VAL"
 
 //Adjustment parameters
 #define workingdistmin_longOutValueString	"WORKINGDISTMIN_LONGOUT_VAL"
 #define workingdistmax_longOutValueString	"WORKINGDISTMAX_LONGOUT_VAL"
+
 //------------------------------------------------------------------------------------
 
 
@@ -79,15 +82,17 @@ class PicoScaledrv : public asynPortDriver {
 		PicoScaledrv();
 		PicoScaledrv(const char *portName);
 
-		//gets
+		//getters
 		virtual void getIp_stringOutValue(char *locator);
 		virtual void getChannelindx_mbboValue(int *channelIndex);
 		virtual void getDatasrcindx_mbboValue(int *datasrcIndex);
-		virtual void getInterleaving_boValue(int *interleavingMode);
+		virtual void getInterleaving_binaryOutValue(int *interleavingMode);
 		virtual void getBufferaggr_mbboValue(int *bufferAggr);
 		virtual void getBuffersnum_longOutValue(int *buffersNum);
 	
-		//sets
+		//setters
+		virtual void setFullaccess_binaryOutValue(int fullaccess);
+		virtual void setConnectionStatus_binaryOutValue(int connectionstatus);
 		virtual void setFramerate_longOutValue(int frameRate);
 
 	protected:
@@ -139,10 +144,12 @@ class PicoScaledrv : public asynPortDriver {
 		// --- Output parameters ---
 		//Communication parameters
 		int ip_stringOutValue;
+		int fullaccess_binaryOutValue;
+		int connectionStatus_binaryOutValue;
 		int framerate_longOutValue;
 		int bufferaggr_mbboValue;
 		int buffersnum_longOutValue;
-		int interleaving_boValue;
+		int interleaving_binaryOutValue;
 		int channelindx_mbboValue;
 		int datasrcindx_mbboValue;
 

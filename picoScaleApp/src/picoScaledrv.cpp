@@ -1,4 +1,5 @@
-#include <string>
+//#include <stdlib.h>
+#include <string.h>
 #include <vector>
 
 //EPICS includes
@@ -19,6 +20,7 @@
 
 #include "picoScaledrv.h"
 
+//------------------------------------------ AsynPortDriver ------------------------------------------
 PicoScaledrv::PicoScaledrv(const char *portName) 
 	: asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
 	asynInt32Mask | asynFloat64Mask | asynFloat64ArrayMask | asynDrvUserMask,// Interfaces that we implement
@@ -64,10 +66,12 @@ PicoScaledrv::PicoScaledrv(const char *portName)
 	createParam(swquality_ch2_analogInValueString, asynParamFloat64, &swquality_ch2_analogInValue);
 	createParam(s2wquality_ch2_analogInValueString, asynParamFloat64, &s2wquality_ch2_analogInValue);
 	createParam(ip_stringOutValueString, asynParamOctet, &ip_stringOutValue);
+	createParam(fullaccess_binaryOutValueString, asynParamInt32, &fullaccess_binaryOutValue);
+	createParam(connectionStatus_binaryOutValueString, asynParamInt32, &connectionStatus_binaryOutValue); 
 	createParam(framerate_longOutValueString, asynParamInt32, &framerate_longOutValue);
 	createParam(bufferaggr_mbboValueString, asynParamInt32, &bufferaggr_mbboValue);
 	createParam(buffersnum_longOutValueString, asynParamInt32, &buffersnum_longOutValue);
-	createParam(interleaving_boValueString, asynParamInt32, &interleaving_boValue);
+	createParam(interleaving_binaryOutValueString, asynParamInt32, &interleaving_binaryOutValue);
 	createParam(channelindx_mbboValueString, asynParamInt32, &channelindx_mbboValue);
 	createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);
 	createParam(workingdistmin_longOutValueString, asynParamInt32, &workingdistmin_longOutValue);
@@ -77,6 +81,7 @@ PicoScaledrv::PicoScaledrv(const char *portName)
 	picoScaledrv->callParamCallbacks();
 }
 
+//getters
 void PicoScaledrv::getIp_stringOutValue(char *locator){
 	getStringParam(ip_stringOutValue, 30, locator);
 }
@@ -89,8 +94,8 @@ void PicoScaledrv::getDatasrcindx_mbboValue(int *datasrcIndex){
 	getIntegerParam(datasrcindx_mbboValue, datasrcIndex);
 }
 
-void PicoScaledrv::getInterleaving_boValue(int *interleavingMode){
-	getIntegerParam(interleaving_boValue, interleavingMode);
+void PicoScaledrv::getInterleaving_binaryOutValue(int *interleavingMode){
+	getIntegerParam(interleaving_binaryOutValue, interleavingMode);
 }
 
 void PicoScaledrv::getBufferaggr_mbboValue(int *bufferAggr){
@@ -102,9 +107,30 @@ void PicoScaledrv::getBuffersnum_longOutValue(int *buffersNum){
 }
 
 
+//setters
+
+void PicoScaledrv::setFullaccess_binaryOutValue(int fullaccess){
+	if(fullaccess != 0){	
+		setIntegerParam(fullaccess_binaryOutValue, SA_SI_ENABLED);
+		picoScaledrv->callParamCallbacks();
+	}
+	else{
+		setIntegerParam(fullaccess_binaryOutValue, SA_SI_DISABLED);
+		picoScaledrv->callParamCallbacks();
+	}
+}
+
+void PicoScaledrv::setConnectionStatus_binaryOutValue(int connectionstatus){
+	setIntegerParam(connectionStatus_binaryOutValue, connectionstatus);
+	picoScaledrv->callParamCallbacks();
+}
+
 void PicoScaledrv::setFramerate_longOutValue(int framerate){
 	setIntegerParam(framerate_longOutValue, framerate);
+	picoScaledrv->callParamCallbacks();
 }
+
+//--------------------------------------------------------------------------------------------------------
 
 int32_t getDataSize(int32_t dataType)
 {
@@ -266,27 +292,41 @@ unsigned int receiveStreamBuffer(SA_SI_Handle handle, unsigned int timeout, bool
 
 unsigned int picoScale_open(struct subRecord  *psub)
 {
-	char *locator;
-	picoScaledrv->getIp_stringOutValue(locator);
+	char *ip;
+	picoScaledrv->getIp_stringOutValue(ip);
+	
+	char *locator_part1 = "network:";
+	char *locator_part2 = ":55555";
+        char *locator	= malloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) + 1);
+	strcpy(locator, locator_part1);
+	strcat(locator, ip);
+	strcat(locator, locator_part2);
 
-	result = (SA_SI_Open(&handle, locator,""));
+	result = (SA_SI_Open(&handle, *locator,""));
+	
+	free(locator);
 
 	if (result != SA_SI_OK)
     	{
+		picoScaledrv->setConnectionStatus_binaryOutValue(0);
+		picoScaledrv->callParamCallbacks();
 		// = "Could not connect to device. Error " + std::to_string(result);
 		return 1;
     	}
+	picoScaledrv->setConnectionStatus_binaryOutValue(1);
+	picoScaledrv->callParamCallbacks();
 	else return result;
 }
 
 unsigned int picoScale_close(struct subRecord *psub)
 {
 	result = SA_SI_Close(handle);
-	delete	picoScaledrv;
 	if (result != SA_SI_OK){
 		//error
 		return 1;
     	}
+	picoScaledrv->setConnectionStatus_binaryOutValue(0);
+	picoScaledrv->callParamCallbacks();
 	else return result;
 }
 
@@ -311,7 +351,6 @@ unsigned int picoScale_setFramerate(struct subRecord *psub)
 
 	streamConfig.frameRate = (int32_t) preciseFrameRate;
 	picoScaledrv->setFramerate_longOutValue((int) preciseFrameRate);//updates framerate record
-	
 	picoScaledrv->callParamCallbacks();
 
 	//frame aggregation based on framerate accordingly to the Programming guide
@@ -430,7 +469,7 @@ unsigned int picoScale_streamPVA_allChannels(genSubRecord *pgenSub){//method for
 	bool lastFrame = false;
 	int *interleavingMode, *bufferAggr, *buffersNum;
 
-	picoScaledrv->getInterleaving_boValue(interleavingMode);
+	picoScaledrv->getInterleaving_binaryOutValue(interleavingMode);
 	picoScaledrv->getBufferaggr_mbboValue(bufferAggr);
 	picoScaledrv->getBuffersnum_longOutValue(buffersNum);
 
@@ -506,7 +545,7 @@ unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub){//metho
 	bool lastFrame = false;
 	int *interleavingMode, *bufferAggr, *buffersNum;
 	
-	picoScaledrv->getInterleaving_boValue(interleavingMode);
+	picoScaledrv->getInterleaving_binaryOutValue(interleavingMode);
 	picoScaledrv->getBufferaggr_mbboValue(bufferAggr);
 	picoScaledrv->getBuffersnum_longOutValue(buffersNum);
 

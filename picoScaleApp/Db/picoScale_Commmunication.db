@@ -18,11 +18,22 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
+record(bo, "$(C):$(P):FULL_ACCESS"){
+	field(DESC, "Connection type")
+	field(VAL, "0")
+	field(ZNAM, "Without full-access")
+	field(ONAM, "Full-access connection")
+	field(INP, "asyn ($(PORT), $(ADDR))FULLACCESS_LONGOUTVAL")
+	field(PINI, "YES")
+}
+
 record(bo, "$(C):$(P):CONNECTION_STATUS"){
 	field(DESC, "Connected/Not Connected")
 	field(VAL, "0")
 	field(ZNAM, "Not Connected")
 	field(ONAM, "Connected")
+	field(INP, "asyn ($(PORT), $(ADDR))CONNECTIONSTATUS_BINARYOUTVAL")
+	field(PINI, "YES")
 }
 
 record(longout, "$(C):$(P):FRAMERATE"){

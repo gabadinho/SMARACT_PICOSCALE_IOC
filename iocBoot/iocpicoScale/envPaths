@@ -1,4 +1,0 @@
-epicsEnvSet("ARCH","linux-x86_64")
-epicsEnvSet("IOC","iocpicoScale")
-epicsEnvSet("TOP","/home/allan/work/SMARACT_PICOSCALE_IOC")
-epicsEnvSet("EPICS_BASE","/usr/local/epics/base")

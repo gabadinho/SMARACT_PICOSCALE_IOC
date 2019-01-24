@@ -1,5 +1,3 @@
-static const char *driverName = "picoScaledrv";
-
 //-------------------------------- Input parameters --------------------------------
 //Channel 0 parameters
 #define pos_ch0_waveformValueString		"POS_CH0_WAVEFORM_VAL"
@@ -48,16 +46,19 @@ static const char *driverName = "picoScaledrv";
 //-------------------------------- Output parameters ---------------------------------
 //Communication parameters
 #define ip_stringOutValueString			"IP_STRINGOUT_VAL"
+#define fullaccess_binaryOutValueString		"FULLACCESS_BINARYOUTVAL"
+#define connectionStatus_binaryOutValueString	"CONNECTIONSTATUS_BINARYOUTVAL"
 #define framerate_longOutValueString		"FRAMERATE_LONGOUT_VAL"
 #define bufferaggr_mbboValueString		"BUFFERAGGR_MBBO_VAL"
 #define buffersnum_longOutValueString		"BUFFERSNUM_LONGOUT_VAL"
-#define interleaving_boValueString		"INTERLEAVING_BO_VAL"
+#define interleaving_binaryOutValueString	"INTERLEAVING_BINARYOUT_VAL"
 #define channelindx_mbboValueString		"CHANNELINDX_MBBO_VAL"
 #define datasrcindx_mbboValueString		"DATASRCINDX_MBBO_VAL"
 
 //Adjustment parameters
 #define workingdistmin_longOutValueString	"WORKINGDISTMIN_LONGOUT_VAL"
 #define workingdistmax_longOutValueString	"WORKINGDISTMAX_LONGOUT_VAL"
+
 //------------------------------------------------------------------------------------
 
 
@@ -70,85 +71,165 @@ static const char *driverName = "picoScaledrv";
 #define NUME_BINARY_OUT		1
 
 #define NUM_PARAMS		46
-#define MAX_SIGNALS		1		
+#define MAX_SIGNALS		1	
+
+using namespace std;
+
+//static const char *driverName = "picoScaledrv";	
 
 class PicoScaledrv : public asynPortDriver {
 	public:
+		PicoScaledrv();
 		PicoScaledrv(const char *portName);
 
-		//SmarAct library calls
-		virtual unsigned int picoScale_open(struct subRecord *psub);
-		virtual unsigned int picoScale_close(struct ubRecord *psub);
-		virtual unsigned int picoScale_setFramerate(struct subRecord *psub){
-		virtual unsigned int picoScale_stream(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_streamPVA(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub);
-		virtual unsigned int picoScale_poll(struct subRecord *psub);
-		virtual unsigned int picoScale_adjust(struct subRecord *psub);
-		
+		//getters
+		virtual void getIp_stringOutValue(char *locator);
+		virtual void getChannelindx_mbboValue(int *channelIndex);
+		virtual void getDatasrcindx_mbboValue(int *datasrcIndex);
+		virtual void getInterleaving_binaryOutValue(int *interleavingMode);
+		virtual void getBufferaggr_mbboValue(int *bufferAggr);
+		virtual void getBuffersnum_longOutValue(int *buffersNum);
+	
+		//setters
+		virtual void setFullaccess_binaryOutValue(int fullaccess);
+		virtual void setConnectionStatus_binaryOutValue(int connectionstatus);
+		virtual void setFramerate_longOutValue(int frameRate);
+
 	protected:
 		// --- Input parameters ---
 		//Channel 0 parameters
-		vector<double> pos_ch0_waveformValue[];
-		vector<double> vel_ch0_waveformValue[];
-		vector<double> acc_ch0_waveformValue[];
-		double swraw_ch0_analogInValue;
-		double s2wraw_ch0_analogInValue;
-		double swquality_ch0_analogInValue;
-		double s2wquality_ch0_analogInValue;
-		double cntrZero_ch0_analogInValue;
-		double cntrOne_ch0_analogInValue;
-		double envtemp_ch0_analogInValue;
-		double envHum_ch0_analogInValue;
-		double envPress_ch0_analogInValue;
-		double gpioAdc0_ch0_analogInValue;
-		double gpioAdc1_ch0_analogInValue;
-		double gpioAdc2_ch0_analogInValue;
-		double calcSys0_ch0_analogInValue;
-		double calcSys1_ch0_analogInValue;
-		double calcSys2_ch0_analogInValue;
-		double calcSys3_ch0_analogInValue;
-		double calcSys4_ch0_analogInValue;
-		double calcSys5_ch0_analogInValue;
-		double calcSys6_ch0_analogInValue;
-		double calcSys7_ch0_analogInValue;
+		int pos_ch0_waveformValue;
+		int vel_ch0_waveformValue;
+		int acc_ch0_waveformValue;
+		int swraw_ch0_analogInValue;
+		int s2wraw_ch0_analogInValue;
+		int swquality_ch0_analogInValue;
+		int s2wquality_ch0_analogInValue;
+		int cntrZero_ch0_analogInValue;
+		int cntrOne_ch0_analogInValue;
+		int envtemp_ch0_analogInValue;
+		int envHum_ch0_analogInValue;
+		int envPress_ch0_analogInValue;
+		int gpioAdc0_ch0_analogInValue;
+		int gpioAdc1_ch0_analogInValue;
+		int gpioAdc2_ch0_analogInValue;
+		int calcSys0_ch0_analogInValue;
+		int calcSys1_ch0_analogInValue;
+		int calcSys2_ch0_analogInValue;
+		int calcSys3_ch0_analogInValue;
+		int calcSys4_ch0_analogInValue;
+		int calcSys5_ch0_analogInValue;
+		int calcSys6_ch0_analogInValue;
+		int calcSys7_ch0_analogInValue;
 
 		//Channel 1 parameters
-		vector<double> pos_ch1_waveformValue[];
-		vector<double> vel_ch1_waveformValue[];
-		vector<double> acc_ch1_waveformValue[];
-		double swraw_ch1_analogInValue;
-		double s2wraw_ch1_analogInValue;
-		double swquality_ch1_analogInValue;
-		double s2wquality_ch1_analogInValue;
+		int pos_ch1_waveformValue;
+		int vel_ch1_waveformValue;
+		int acc_ch1_waveformValue;
+		int swraw_ch1_analogInValue;
+		int s2wraw_ch1_analogInValue;
+		int swquality_ch1_analogInValue;
+		int s2wquality_ch1_analogInValue;
 
 		//Channel 2 parameters 
-		vector<double> pos_ch2_waveformValue[];
-		vector<double> vel_ch2_waveformValue[];
-		vector<double> acc_ch2_waveformValue[];
-		double swraw_ch2_analogInValue;
-		double s2wraw_ch2_analogInValue;
-		double swquality_ch2_analogInValue;
-		double s2wquality_ch2_analogInValue;
+		int pos_ch2_waveformValue;
+		int vel_ch2_waveformValue;
+		int acc_ch2_waveformValue;
+		int swraw_ch2_analogInValue;
+		int s2wraw_ch2_analogInValue;
+		int swquality_ch2_analogInValue;
+		int s2wquality_ch2_analogInValue;
 		//--------------------------
 
 		// --- Output parameters ---
 		//Communication parameters
-		char ip_stringOutValue[15];
-		unsigned short framerate_longOutValue;
-		unsigned short bufferaggr_mbboValue;
-		unsigned short buffersnum_longOutValue;
-		bool interleaving_boValue;
-		unsigned short channelindx_mbboValue;
-		unsigned short datasrcindx_mbboValue;
+		int ip_stringOutValue;
+		int fullaccess_binaryOutValue;
+		int connectionStatus_binaryOutValue;
+		int framerate_longOutValue;
+		int bufferaggr_mbboValue;
+		int buffersnum_longOutValue;
+		int interleaving_binaryOutValue;
+		int channelindx_mbboValue;
+		int datasrcindx_mbboValue;
 
 		//Adjustment parameters
-		unsigned short workingdistmin_longOutValue;
-		unsigned short workingdistmax_longOutValue;
+		int workingdistmin_longOutValue;
+		int workingdistmax_longOutValue;
 		//--------------------------
+};
 
-	private:
-		//PicoScale variables
-		unsigned int result;
-    		SA_SI_Handle handle;
-}
+// A union to store different types in one variable
+union VariantValue
+{
+    uint8_t u8value;
+    int8_t i8value;
+    uint16_t u16value;
+    int16_t i16value;
+    uint32_t u32value;
+    int32_t i32value;
+    uint64_t u48value;
+    int64_t i48value;
+    uint64_t u64value;
+    int64_t i64value;
+    float f32value;
+    double f64value;
+};
+
+/*
+struct DataSourceDescription_t {
+    int32_t componentID;
+    int32_t componentIndex;
+    int32_t dataSourceType;
+};
+*/
+
+struct DataSourceAddress_t {
+    uint8_t channelIndex;
+    uint8_t dataSourceIndex;
+};
+
+struct DataSource_t {
+    DataSourceAddress_t address;
+    int32_t dataType;
+    int32_t dataSize;
+};
+
+struct DataSourceData_t {
+    vector<VariantValue> data;
+};
+
+/*
+struct StreamData_t {
+    vector<DataSourceData_t> dataSource;
+};*/
+
+struct StreamConfig_t {
+    //vector<DataSource_t> enabledDataSources;
+    //int32_t frameSize;
+    bool interleavingEnabled;
+    int32_t frameAggregation;
+    int32_t streamBufferAggregation;
+    int32_t frameRate;
+    int32_t numberOfStreamBuffers;
+};
+
+//Globals
+PicoScaledrv *picoScaledrv;
+unsigned int result;
+SA_SI_Handle handle;
+struct StreamConfig_t streamConfig;
+const SA_SI_DataBuffer *pBuffer;
+int32_t dataSourceP0, dataSourceV0, dataSourceA0, dataSourceP1, dataSourceV1, dataSourceA1, dataSourceP2, dataSourceV2, dataSourceA2;
+vector<int32_t> stream_datasrcs_sizes, streamPVA_allchannels_datasrcs_sizes, streamPosition_allchannels_datasrcs_sizes;
+int32_t streamPVA_allchannels_frame_size = 0, streamPosition_allchannels_frame_size = 0;
+
+//SmarAct library calls
+unsigned int picoScale_open(struct subRecord *psub);
+unsigned int picoScale_close(struct subRecord *psub);
+unsigned int picoScale_setFramerate(struct subRecord *psub);
+unsigned int picoScale_stream(genSubRecord *pgenSub);
+unsigned int picoScale_streamPVA_allChannels(genSubRecord *pgenSub);
+unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub);
+unsigned int picoScale_poll(struct subRecord *psub);
+unsigned int picoScale_adjust(struct subRecord *psub);

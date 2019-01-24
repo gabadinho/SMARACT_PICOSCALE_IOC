@@ -24,6 +24,8 @@ TEMPLATE_TOP=$(EPICS_BASE)/templates/makeBaseApp/top
 SUPPORT=/usr/local/epics/synApps_5_8/support
 
 ASYN= $(SUPPORT)/asyn-4-26
+GENSUB= $(SUPPORT)/genSubV1-8
+FTCHIPID = $(TOP)/smaract
 
 # If using the sequencer, point SNCSEQ at its top directory:
 #SNCSEQ=$(EPICS_BASE)/../modules/soft/seq

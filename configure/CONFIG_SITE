@@ -28,4 +28,5 @@ CHECK_RELEASE = YES
 # Set this when the IOC and build host use different paths
 #   to the install location. This may be needed to boot from
 #   a Microsoft FTP server say, or on some NFS configurations.
-#IOCS_APPL_TOP = </IOC's/absolute/path/to/install/top>
+#IOCS_APPL_TOP = </IOC's/absolute/path/to/install/top#>
+

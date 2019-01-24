@@ -4,11 +4,11 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS BELOW HERE
 
 # Install databases, templates & substitutions like this
-DB += dbExample1.db
-DB += dbExample2.db
-DB += dbSubExample.db
-DB += user.substitutions
-DB += userHost.substitutions
+DB += picoScale_Channel_Common.db
+DB += picoScale_Channel0.db
+DB += picoScale_Commmunication.db
+DB += picoScale_Adjustment.db
+//DB += picoScale_Experiment.db
 
 # If <anyname>.db template is not named <anyname>*.template add
 # <anyname>_TEMPLATE = <templatename>

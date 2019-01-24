@@ -18,6 +18,23 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
+record(bo, "$(C):$(P):FULL_ACCESS"){
+	field(DESC, "Connection type")
+	field(VAL, "0")
+	field(ZNAM, "Without full-access")
+	field(ONAM, "Full-access connection")
+	field(INP, "asyn ($(PORT), $(ADDR))FULLACCESS_LONGOUTVAL")
+	field(PINI, "YES")
+}
+
+record(bo, "$(C):$(P):CONNECTION_STATUS"){
+	field(DESC, "Connected/Not Connected")
+	field(VAL, "0")
+	field(ZNAM, "Not Connected")
+	field(ONAM, "Connected")
+	field(INP, "asyn ($(PORT), $(ADDR))CONNECTIONSTATUS_BINARYOUTVAL")
+	field(PINI, "YES")
+}
 
 record(longout, "$(C):$(P):FRAMERATE"){
 	field(DESC, "PicoScale current operation framerate")
@@ -116,6 +133,13 @@ record(genSub, "$(C):$(P):STREAM_PVA"){
 	field(OUTI, "$(C):$(P):ACC_2")
 	field(FTVI, DOUBLE)
 	field(NOVI, 10000000)
+}
+
+record(bo, "$(C):$(P):STREAM_STATUS"){
+	field(DESC, "Stream Active/Inactive")
+	field(VAL, "0")
+	field(ZNAM, "Stream inactive")
+	field(ONAM, "Stream active")
 }
 
 record(sub, "$(C):$(P):POLL"){

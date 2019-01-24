@@ -3,6 +3,7 @@
 record(longout, "$(C):$(P):WORKINGDIST_MIN"){
 	field(DESC, "Minimum working distance for adjustment")
 	field(VAL, "30")
+	field(PINI, "YES")
 	field(EGU, "mm")
 	field(LOPR, "1")
 	field(HIPR, "500")
@@ -12,10 +13,19 @@ record(longout, "$(C):$(P):WORKINGDIST_MIN"){
 record(longout, "$(C):$(P):WORKINGDIST_MAX"){
 	field(DESC, "Maximum working distance for adjustment")
 	field(VAL, "80")
+	field(PINI, "YES")
 	field(EGU, "mm")
 	field(LOPR, "1")
 	field(HIPR, "500")
 	field(OUT, "@asyn ($(PORT), $(ADDR))WORKINGDISTMAX_LONGOUT_VAL")
+}
+
+record(longout, "$(C):$(P):FIBERLENGTH"){
+	field(DESC, "Fiber length")
+	field(VAL, "1600")
+	field(PINI, "YES")
+	field(EGU, "mm")
+	field(OUT, "@asyn ($(PORT), $(ADDR))FIBERLENGTH_LONGOUT_VAL")
 }
 
 record(sub, "$(C):$(P):ADJUST"){

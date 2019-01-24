@@ -58,7 +58,7 @@
 //Adjustment parameters
 #define workingdistmin_longOutValueString	"WORKINGDISTMIN_LONGOUT_VAL"
 #define workingdistmax_longOutValueString	"WORKINGDISTMAX_LONGOUT_VAL"
-
+#define fiberlength_longOutValueString		"FIBERLENGTH_LONGOUT_VAL"
 //------------------------------------------------------------------------------------
 
 
@@ -156,6 +156,7 @@ class PicoScaledrv : public asynPortDriver {
 		//Adjustment parameters
 		int workingdistmin_longOutValue;
 		int workingdistmax_longOutValue;
+		int fiberlength_longOutValue;
 		//--------------------------
 };
 
@@ -215,14 +216,14 @@ struct StreamConfig_t {
 };
 
 //Globals
-PicoScaledrv *picoScaledrv;
-unsigned int result;
+PicoScaledrv *picoScaledrv; //AsynPortDriver object that will allows us to call inside functions from subroutine records' defined functions
+unsigned int result; //receives an hex code from every SmarAct function return that may represent success for the operation (SA_SI_OK or 0x00) or specific error code
 SA_SI_Handle handle;
-struct StreamConfig_t streamConfig;
-const SA_SI_DataBuffer *pBuffer;
-int32_t dataSourceP0, dataSourceV0, dataSourceA0, dataSourceP1, dataSourceV1, dataSourceA1, dataSourceP2, dataSourceV2, dataSourceA2;
-vector<int32_t> stream_datasrcs_sizes, streamPVA_allchannels_datasrcs_sizes, streamPosition_allchannels_datasrcs_sizes;
-int32_t streamPVA_allchannels_frame_size = 0, streamPosition_allchannels_frame_size = 0;
+struct StreamConfig_t streamConfig; //all stream configurations are stored in the variables of this struct
+const SA_SI_DataBuffer *pBuffer; //the buffer that will receive the streamed data
+int32_t dataSourceP0, dataSourceV0, dataSourceA0, dataSourceP1, dataSourceV1, dataSourceA1, dataSourceP2, dataSourceV2, dataSourceA2; //datasources' indexes
+vector<int32_t> stream_datasrcs_sizes, streamPVA_allchannels_datasrcs_sizes, streamPosition_allchannels_datasrcs_sizes; //vectors containing datasources' sizes for the offset parameter used in interleaved mode
+int32_t streamPVA_allchannels_frame_size = 0, streamPosition_allchannels_frame_size = 0; //frame size based on the sum of the datasources' sizes
 
 //SmarAct library calls
 unsigned int picoScale_open(struct subRecord *psub);

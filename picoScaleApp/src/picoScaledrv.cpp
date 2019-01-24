@@ -1,4 +1,4 @@
-//#include <stdlib.h>
+#include <iostream>
 #include <string.h>
 #include <vector>
 
@@ -76,6 +76,7 @@ PicoScaledrv::PicoScaledrv(const char *portName)
 	createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);
 	createParam(workingdistmin_longOutValueString, asynParamInt32, &workingdistmin_longOutValue);
 	createParam(workingdistmax_longOutValueString, asynParamInt32, &workingdistmax_longOutValue);
+	createParam(fiberlength_longOutValueString, asynParamInt32, &fiberlength_longOutValue);
 
 	setStringParam(ip_stringOutValue, portName);
 	picoScaledrv->callParamCallbacks();
@@ -108,7 +109,6 @@ void PicoScaledrv::getBuffersnum_longOutValue(int *buffersNum){
 
 
 //setters
-
 void PicoScaledrv::setFullaccess_binaryOutValue(int fullaccess){
 	if(fullaccess != 0){	
 		setIntegerParam(fullaccess_binaryOutValue, SA_SI_ENABLED);
@@ -295,27 +295,28 @@ unsigned int picoScale_open(struct subRecord  *psub)
 	char *ip;
 	picoScaledrv->getIp_stringOutValue(ip);
 	
-	char *locator_part1 = "network:";
-	char *locator_part2 = ":55555";
-        char *locator	= malloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) + 1);
+	const char *locator_part1 = "network:";
+	const char *locator_part2 = ":55555";
+        char *locator	= (char*) calloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) + 1, sizeof(char));
 	strcpy(locator, locator_part1);
 	strcat(locator, ip);
 	strcat(locator, locator_part2);
 
-	result = (SA_SI_Open(&handle, *locator,""));
+	result = (SA_SI_Open(&handle, locator,""));
 	
 	free(locator);
 
 	if (result != SA_SI_OK)
     	{
+		//error
 		picoScaledrv->setConnectionStatus_binaryOutValue(0);
 		picoScaledrv->callParamCallbacks();
-		// = "Could not connect to device. Error " + std::to_string(result);
-		return 1;
+		cout << "Could not connect to device. Check ERROR record.";
+		return 1; //returning 1 so subroutine record stops processing
     	}
 	picoScaledrv->setConnectionStatus_binaryOutValue(1);
 	picoScaledrv->callParamCallbacks();
-	else return result;
+	return result;
 }
 
 unsigned int picoScale_close(struct subRecord *psub)
@@ -323,11 +324,15 @@ unsigned int picoScale_close(struct subRecord *psub)
 	result = SA_SI_Close(handle);
 	if (result != SA_SI_OK){
 		//error
-		return 1;
+		return 1; //returning 1 so subroutine record stops processing
     	}
 	picoScaledrv->setConnectionStatus_binaryOutValue(0);
 	picoScaledrv->callParamCallbacks();
-	else return result;
+	return result;
+}
+
+unsigned int picoScale_setFullAccess(struct subRecord *psub){
+//	result = 
 }
 
 unsigned int picoScale_setFramerate(struct subRecord *psub)
@@ -338,7 +343,7 @@ unsigned int picoScale_setFramerate(struct subRecord *psub)
 	
 	if (result != SA_SI_OK){
 		//error
-		return 1;
+		return 1; //returning 1 so subroutine record stops processing
     	}
 	
 	double preciseFrameRate;
@@ -346,14 +351,14 @@ unsigned int picoScale_setFramerate(struct subRecord *psub)
     	
 	if (result != SA_SI_OK){
 		//error
-        	return 1;
+        	return 1; //returning 1 so subroutine record stops processing
     	}
 
 	streamConfig.frameRate = (int32_t) preciseFrameRate;
 	picoScaledrv->setFramerate_longOutValue((int) preciseFrameRate);//updates framerate record
 	picoScaledrv->callParamCallbacks();
 
-	//frame aggregation based on framerate accordingly to the Programming guide
+	//frame aggregation based on framerate value accordingly to the Programming guide
 	switch(streamConfig.frameRate){
 		case 1:
 		case 2:
@@ -417,6 +422,7 @@ unsigned int picoScale_stream(genSubRecord *pgenSub){ //method for streaming a s
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, *channelIndex, *datasrcIndex),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
@@ -424,7 +430,7 @@ unsigned int picoScale_stream(genSubRecord *pgenSub){ //method for streaming a s
 	dataSource.address.channelIndex = *channelIndex;
 	dataSource.address.dataSourceIndex = *datasrcIndex;
 	
-	picoScaledrv->getInterleaving_boValue(interleavingMode);
+	picoScaledrv->getInterleaving_binaryOutValue(interleavingMode);
 	picoScaledrv->getBufferaggr_mbboValue(bufferAggr);
 	picoScaledrv->getBuffersnum_longOutValue(buffersNum);
 
@@ -434,18 +440,22 @@ unsigned int picoScale_stream(genSubRecord *pgenSub){ //method for streaming a s
 
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = configureStream(handle);
     	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
     	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}	
 	
@@ -455,12 +465,12 @@ unsigned int picoScale_stream(genSubRecord *pgenSub){ //method for streaming a s
     	{
 		result = receiveStreamBuffer(handle, 2000, lastFrame, stream_datasrcs_sizes, dataSource.dataSize);
 		if (result != SA_SI_OK)
-		    return result;
+			//error    
+			return result;
     	}
 	
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_DISABLED);
-    	if (result != SA_SI_OK)
-        	return result;
+    	if (result != SA_SI_OK) return result; //error
 
 	return SA_SI_OK;	
 }
@@ -479,64 +489,74 @@ unsigned int picoScale_streamPVA_allChannels(genSubRecord *pgenSub){//method for
 
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,1),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,2),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,1),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,2),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,1),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,2),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 
 	result = configureStream(handle);
     	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
     	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}	
 	
 	while (!lastFrame)
     	{
 		result = receiveStreamBuffer(handle, 2000, lastFrame, streamPVA_allchannels_datasrcs_sizes, streamPVA_allchannels_frame_size);
-		if (result != SA_SI_OK)
-		    return result;
+		if (result != SA_SI_OK) return result;//error
     	}
 
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_DISABLED);
-    	if (result != SA_SI_OK)
-        	return result;
+    	if (result != SA_SI_OK) return result; //error
 
 	return SA_SI_OK;	
 }
@@ -555,40 +575,44 @@ unsigned int picoScale_streamPosition_allChannels(genSubRecord *pgenSub){//metho
 
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
 
 	result = configureStream(handle);
     	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}
     	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
 	if (result != SA_SI_OK){
+		//error
         	return result;
 	}	
 	
 	while (!lastFrame)
     	{
 		result = receiveStreamBuffer(handle, 2000, lastFrame, streamPosition_allchannels_datasrcs_sizes, streamPosition_allchannels_frame_size);
-		if (result != SA_SI_OK)
-		    return result;
+		if (result != SA_SI_OK) return result; //error
     	}
 	
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_DISABLED);
-    	if (result != SA_SI_OK)
-        	return result;
+    	if (result != SA_SI_OK) return result;//error
 
 	return SA_SI_OK;	
 }
@@ -600,13 +624,13 @@ unsigned int picoScale_poll(subRecord *psub){
 unsigned int picoScale_adjust(subRecord *psub){
 // activate manual adjustment phase
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_AF_ADJUSTMENT_STATE_PROP,0,0),SA_PS_ADJUSTMENT_STATE_MANUAL_ADJUST);
-    	if (result != SA_SI_OK)
-        	return result;
+    	if (result != SA_SI_OK)	return result; //error
     
 	return SA_SI_OK;
 }
 
-//--- Driver function
+//------------------------------------------ IOC Shell Functions ------------------------------------------
+//--- Create driver function
 extern "C" int PicoScaleCreateDriver(const char *portName){
 	picoScaledrv = new PicoScaledrv(portName);
 	return(asynSuccess);
@@ -635,46 +659,55 @@ extern "C" int PicoScaleInitializingRoutinesRun(){ //Should be called from st.cm
 	
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 0),&dataSourceP0,0); 
 	if (result != SA_SI_OK){
+		//error		
 		return result;
 	}
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 1),&dataSourceV0,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 	
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 2),&dataSourceA0,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 	
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 1, 0),&dataSourceP1,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 1, 1),&dataSourceV1,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 1, 2),&dataSourceA1,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 2, 0),&dataSourceP2,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 2, 1),&dataSourceV2,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 2, 2),&dataSourceA2,0); 
 	if (result != SA_SI_OK){
+		//error
 		return result;
 	}
 
@@ -709,9 +742,11 @@ extern "C" {
 	epicsExportRegistrar(initPicoScaleRegister);
 }
 //---
+//----------------------------------------------------------------------------------------------------------
 
 epicsRegisterFunction(picoScale_open);
 epicsRegisterFunction(picoScale_close);
+epicsRegisterFunction(picoScale_setFullAccess);
 epicsRegisterFunction(picoScale_setFramerate);
 epicsRegisterFunction(picoScale_stream);
 epicsRegisterFunction(picoScale_streamPVA_allChannels);

@@ -2,7 +2,7 @@ record(stringout, "$(C):$(P):IP"){
 	field(DESC, "Device IP address for connecting")
 	field(VAL, "$(ADDR)")
 	field(PINI, "YES")
-	field(OUT, "@asyn ($(PORT), $(ADDR))IP_STRINGOUT_VAL")
+	field(OUT, "@asyn ($(ADDR))IP_STRINGOUT_VAL")
 	field(FLNK, "$(C):$(P):OPEN")
 }
 
@@ -18,13 +18,22 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
+record(	, "$(C):$(P):ERROR"){
+	field(DESC, "Error codes")
+}
+
 record(bo, "$(C):$(P):FULL_ACCESS"){
 	field(DESC, "Connection type")
 	field(VAL, "0")
 	field(ZNAM, "Without full-access")
 	field(ONAM, "Full-access connection")
-	field(INP, "asyn ($(PORT), $(ADDR))FULLACCESS_LONGOUTVAL")
+	field(INP, "asyn ($(ADDR))FULLACCESS_LONGOUTVAL")
 	field(PINI, "YES")
+	field(FLNK, "$(C):$(P):SETFULL_ACCESS")
+}
+
+record(sub, "$(C):$(P):SETFULL_ACCESS"){
+	field(SNAM, "picoScale_setFullAccess")
 }
 
 record(bo, "$(C):$(P):CONNECTION_STATUS"){
@@ -32,7 +41,7 @@ record(bo, "$(C):$(P):CONNECTION_STATUS"){
 	field(VAL, "0")
 	field(ZNAM, "Not Connected")
 	field(ONAM, "Connected")
-	field(INP, "asyn ($(PORT), $(ADDR))CONNECTIONSTATUS_BINARYOUTVAL")
+	field(INP, "asyn ($(ADDR))CONNECTIONSTATUS_BINARYOUTVAL")
 	field(PINI, "YES")
 }
 
@@ -57,7 +66,7 @@ record(longout, "$(C):$(P):BUFFERS"){
 	field(PINI, "YES")
 	field(LOPR, "2")
 	field(HOPR, "256")
-	field(OUT, "@asyn ($(PORT), $(ADDR))BUFFERSNUM_LONGOUT_VAL")
+	field(OUT, "@asyn ($(ADDR))BUFFERSNUM_LONGOUT_VAL")
 }
 
 record(mbbo, "$(C):$(P):BUFFERAGGR"){
@@ -71,7 +80,7 @@ record(mbbo, "$(C):$(P):BUFFERAGGR"){
 	field(FVVL, "512")
 	field(SXVL, "1024")
 	field(PINI, "YES")
-	field(OUT, "@asyn ($(PORT), $(ADDR))BUFFERAGGR_MBBO_VAL")
+	field(OUT, "@asyn ($(ADDR))BUFFERAGGR_MBBO_VAL")
 }
 
 record(bo, "$(C):$(P):INTERLEAVING"){
@@ -80,7 +89,7 @@ record(bo, "$(C):$(P):INTERLEAVING"){
 	field(ZNAM, "Disabled")
 	field(ONAM, "Enabled")
 	field(PINI, "YES")
-	field(OUT, "@asyn ($(PORT), $(ADDR))INTERLEAVING_BO_VAL")
+	field(OUT, "@asyn ($(ADDR))INTERLEAVING_BO_VAL")
 }
 
 record(genSub, "$(C):$(P):STREAM"){
@@ -92,7 +101,7 @@ record(genSub, "$(C):$(P):STREAM"){
 	field(INPC, "$(C):$(P):FRAMERATE")
 	field(FTC, "LONG")
 	field(SNAM, "picoScale_stream")
-	field(OUTA, "$(C):$(P):STREAMDATA.VAL")
+	field(OUTA, "$(C):$(P):STREAMDATA")
 }
 
 record(waveform, "$(C):$(P):STREAMDATA"){
@@ -106,33 +115,33 @@ record(genSub, "$(C):$(P):STREAM_PVA"){
 	field(DESC, "Data stream of Position/Velocity/Acceleration data sources from all channels")
 	field(INPA, "$(C):$(P):FRAMERATE")
 	field(SNAM, "picoScale_streamPVA")
-	field(OUTA, "$(C):$(P):POS_0")
-	field(FTVA, DOUBLE)
-	field(NOVA, 10000000)
-	field(OUTB, "$(C):$(P):VEL_0")
-	field(FTVB, DOUBLE)
-	field(NOVB, 10000000)
-	field(OUTC, "$(C):$(P):ACC_0")
-	field(FTVC, DOUBLE)
-	field(NOVC, 10000000)
-	field(OUTD, "$(C):$(P):POS_1")
-	field(FTVD, DOUBLE)
-	field(NOVD, 10000000)
-	field(OUTE, "$(C):$(P):VEL_1")
-	field(FTVE, DOUBLE)
-	field(NOVE, 10000000)
-	field(OUTF, "$(C):$(P):ACC_1")
-	field(FTVF, DOUBLE)
-	field(NOVF, 10000000)
-	field(OUTG, "$(C):$(P):POS_2")
-	field(FTVG, DOUBLE)
-	field(NOVG, 10000000)
-	field(OUTH, "$(C):$(P):VEL_2")
-	field(FTVH, DOUBLE)
-	field(NOVH, 10000000)
-	field(OUTI, "$(C):$(P):ACC_2")
-	field(FTVI, DOUBLE)
-	field(NOVI, 10000000)
+	//field(OUTA, "$(C):$(P):POS_0")
+	//field(FTVA, DOUBLE)
+	//field(NOVA, 10000000)
+	//field(OUTB, "$(C):$(P):VEL_0")
+	//field(FTVB, DOUBLE)
+	//field(NOVB, 10000000)
+	//field(OUTC, "$(C):$(P):ACC_0")
+	//field(FTVC, DOUBLE)
+	//field(NOVC, 10000000)
+	//field(OUTD, "$(C):$(P):POS_1")
+	//field(FTVD, DOUBLE)
+	//field(NOVD, 10000000)
+	//field(OUTE, "$(C):$(P):VEL_1")
+	//field(FTVE, DOUBLE)
+	//field(NOVE, 10000000)
+	//field(OUTF, "$(C):$(P):ACC_1")
+	//field(FTVF, DOUBLE)
+	//field(NOVF, 10000000)
+	//field(OUTG, "$(C):$(P):POS_2")
+	//field(FTVG, DOUBLE)
+	//field(NOVG, 10000000)
+	//field(OUTH, "$(C):$(P):VEL_2")
+	//field(FTVH, DOUBLE)
+	//field(NOVH, 10000000)
+	//field(OUTI, "$(C):$(P):ACC_2")
+	//field(FTVI, DOUBLE)
+	//field(NOVI, 10000000)
 }
 
 record(bo, "$(C):$(P):STREAM_STATUS"){
@@ -157,7 +166,7 @@ record(mbbo, "$(C):$(P):CHANNELINDX"){
 	field(ZRST, "Channel 0")
 	field(ONST, "Channel 1")
 	field(TWVL, "Channel 2")
-	field(OUT, "@asyn ($(PORT), $(ADDR))CHANNELINDX_MBBO_VAL")
+	field(OUT, "@asyn ($(ADDR))CHANNELINDX_MBBO_VAL")
 }
 
 record(mbbo, "$(C):$(P):DATASRCINDX"){
@@ -180,7 +189,7 @@ record(mbbo, "$(C):$(P):DATASRCINDX"){
 	field(SXST, "S2w")
 	field(SVST, "SwQuality")
 	field(EIST, "S2wQuality")
-	field(OUT, "@asyn ($(PORT), $(ADDR))DATASRCINDX_MBBO_VAL")
+	field(OUT, "@asyn ($(ADDR))DATASRCINDX_MBBO_VAL")
 }
 
 

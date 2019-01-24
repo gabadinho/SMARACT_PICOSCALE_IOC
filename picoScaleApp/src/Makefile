@@ -4,13 +4,23 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS BELOW HERE 
 
-# Build the IOC application
 PROD_IOC = picoScale
 
+#picoScale_CXXFLAGS = -L/home/ABTLUS/allan.bugyi/work/dev/iocs/SMARACT_PICOSCALE_IOC/src/
 picoScale_SYS_LIBS += ftchipid
 picoScale_SYS_LIBS += ftd2xx
 picoScale_SYS_LIBS += smaractio
 picoScale_SYS_LIBS += smaractsi
+
+#picoScale_DIR += /home/ABTLUS/allan.bugyi/work/dev/iocs/SMARACT_PICOSCALE_IOC/src/
+
+#PROD_SYS_LIBS += ftchipid
+#PROD_SYS_LIBS += ftd2xx
+#PROD_SYS_LIBS += smaractio
+#PROD_SYS_LIBS += smaractsi
+
+#picoScale_LIBS += ftchipid ftd2xx
+#picoScale_LIBS += smaractio smaractsi
 
 # picoScale.dbd will be created and installed
 DBD += picoScale.dbd

@@ -18,7 +18,7 @@ record(sub, "$(C):$(P):CLOSE"){
 	field(SNAM, "picoScale_close")
 }
 
-record(	, "$(C):$(P):ERROR"){
+record(	genSub, "$(C):$(P):ERROR"){
 	field(DESC, "Error codes")
 }
 
@@ -27,7 +27,7 @@ record(bo, "$(C):$(P):FULL_ACCESS"){
 	field(VAL, "0")
 	field(ZNAM, "Without full-access")
 	field(ONAM, "Full-access connection")
-	field(INP, "asyn ($(ADDR))FULLACCESS_LONGOUTVAL")
+	#field(INP, "asyn ($(ADDR))FULLACCESS_LONGOUTVAL")
 	field(PINI, "YES")
 	field(FLNK, "$(C):$(P):SETFULL_ACCESS")
 }
@@ -37,11 +37,11 @@ record(sub, "$(C):$(P):SETFULL_ACCESS"){
 }
 
 record(bo, "$(C):$(P):CONNECTION_STATUS"){
-	field(DESC, "Connected/Not Connected")
+	field(DESC, "Connected-Not Connected")
 	field(VAL, "0")
 	field(ZNAM, "Not Connected")
 	field(ONAM, "Connected")
-	field(INP, "asyn ($(ADDR))CONNECTIONSTATUS_BINARYOUTVAL")
+	#field(INP, "asyn ($(ADDR))CONNECTIONSTATUS_BINARYOUTVAL")
 	field(PINI, "YES")
 }
 
@@ -104,7 +104,7 @@ record(genSub, "$(C):$(P):STREAM"){
 	field(OUTA, "$(C):$(P):STREAMDATA")
 }
 
-record(waveform, "$(C):$(P):STREAMDATA"){
+record(waveform, "$(C):$(P):STREAMEDDATA"){
 	field(DESC, "Received stream data")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
@@ -112,40 +112,40 @@ record(waveform, "$(C):$(P):STREAMDATA"){
 
 #Streaming of specific position/velocity/acceleration datasources (frequency up to 10MHz)
 record(genSub, "$(C):$(P):STREAM_PVA"){
-	field(DESC, "Data stream of Position/Velocity/Acceleration data sources from all channels")
+	field(DESC, "Stream Pos-Vel-Acc from all channels")
 	field(INPA, "$(C):$(P):FRAMERATE")
-	field(SNAM, "picoScale_streamPVA")
-	//field(OUTA, "$(C):$(P):POS_0")
-	//field(FTVA, DOUBLE)
-	//field(NOVA, 10000000)
-	//field(OUTB, "$(C):$(P):VEL_0")
-	//field(FTVB, DOUBLE)
-	//field(NOVB, 10000000)
-	//field(OUTC, "$(C):$(P):ACC_0")
-	//field(FTVC, DOUBLE)
-	//field(NOVC, 10000000)
-	//field(OUTD, "$(C):$(P):POS_1")
-	//field(FTVD, DOUBLE)
-	//field(NOVD, 10000000)
-	//field(OUTE, "$(C):$(P):VEL_1")
-	//field(FTVE, DOUBLE)
-	//field(NOVE, 10000000)
-	//field(OUTF, "$(C):$(P):ACC_1")
-	//field(FTVF, DOUBLE)
-	//field(NOVF, 10000000)
-	//field(OUTG, "$(C):$(P):POS_2")
-	//field(FTVG, DOUBLE)
-	//field(NOVG, 10000000)
-	//field(OUTH, "$(C):$(P):VEL_2")
-	//field(FTVH, DOUBLE)
-	//field(NOVH, 10000000)
-	//field(OUTI, "$(C):$(P):ACC_2")
-	//field(FTVI, DOUBLE)
-	//field(NOVI, 10000000)
+	field(SNAM, "picoScale_streamPVA_allChannels")
+	#field(OUTA, "$(C):$(P):POS_0")
+	#field(FTVA, DOUBLE)
+	#field(NOVA, 10000000)
+	#field(OUTB, "$(C):$(P):VEL_0")
+	#field(FTVB, DOUBLE)
+	#field(NOVB, 10000000)
+	#field(OUTC, "$(C):$(P):ACC_0")
+	#field(FTVC, DOUBLE)
+	#field(NOVC, 10000000)
+	#field(OUTD, "$(C):$(P):POS_1")
+	#field(FTVD, DOUBLE)
+	#field(NOVD, 10000000)
+	#field(OUTE, "$(C):$(P):VEL_1")
+	#field(FTVE, DOUBLE)
+	#field(NOVE, 10000000)
+	#field(OUTF, "$(C):$(P):ACC_1")
+	#field(FTVF, DOUBLE)
+	#field(NOVF, 10000000)
+	#field(OUTG, "$(C):$(P):POS_2")
+	#field(FTVG, DOUBLE)
+	#field(NOVG, 10000000)
+	#field(OUTH, "$(C):$(P):VEL_2")
+	#field(FTVH, DOUBLE)
+	#field(NOVH, 10000000)
+	#field(OUTI, "$(C):$(P):ACC_2")
+	#field(FTVI, DOUBLE)
+	#field(NOVI, 10000000)
 }
 
 record(bo, "$(C):$(P):STREAM_STATUS"){
-	field(DESC, "Stream Active/Inactive")
+	field(DESC, "Stream Active-Inactive")
 	field(VAL, "0")
 	field(ZNAM, "Stream inactive")
 	field(ONAM, "Stream active")
@@ -153,8 +153,8 @@ record(bo, "$(C):$(P):STREAM_STATUS"){
 
 record(sub, "$(C):$(P):POLL"){
 	field(DESC, "Polling of specified data source")
-	field(INPA, "$(C):$(P):CHANNELINDX_$(Ch)")
-	field(INPB, "$(C):$(P):DATASRCINDX_$(Ch)")
+	field(INPA, "$(C):$(P):CHANNELINDX")
+	field(INPB, "$(C):$(P):DATASRCINDX")
 	field(SNAM, "picoScale_poll")
 }
 
@@ -165,7 +165,7 @@ record(mbbo, "$(C):$(P):CHANNELINDX"){
 	field(TWVL, "2")
 	field(ZRST, "Channel 0")
 	field(ONST, "Channel 1")
-	field(TWVL, "Channel 2")
+	field(TWST, "Channel 2")
 	field(OUT, "@asyn ($(ADDR))CHANNELINDX_MBBO_VAL")
 }
 

@@ -1,5 +1,6 @@
 function(picoScale_open)
 function(picoScale_close)
+function(picoScale_setFullAccess)
 function(picoScale_setFramerate)
 function(picoScale_stream)
 function(picoScale_streamPVA_allChannels)

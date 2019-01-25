@@ -75,7 +75,7 @@
 
 using namespace std;
 
-//static const char *driverName = "picoScaledrv";	
+static const char *driverName = "picoScaledrv";	
 
 class PicoScaledrv : public asynPortDriver {
 	public:

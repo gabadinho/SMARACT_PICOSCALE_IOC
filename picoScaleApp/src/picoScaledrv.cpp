@@ -304,8 +304,6 @@ unsigned int picoScale_open(struct subRecord  *psub)
 
 	result = (SA_SI_Open(&handle, locator,""));
 	
-	free(locator);
-
 	if (result != SA_SI_OK)
     	{
 		//error

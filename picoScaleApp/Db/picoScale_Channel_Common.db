@@ -23,22 +23,18 @@ record(waveform, "$(C):$(P):ACC_$(Ch)"){
 
 record(ai, "$(C):$(P):SWRAW_$(Ch)"){
 	field(DESC, "Sine raw")
-	field(DTYPE, "Soft Channel")
 }
 
 record(ai, "$(C):$(P):S2WRAW_$(Ch)"){
 	field(DESC, "Cosine raw")
-	field(DTYPE, "Soft Channel")
 }
 
 record(ai, "$(C):$(P):SWQUALITY_$(Ch)"){
 	field(DESC, "Sine quality")
-	field(DTYPE, "Soft Channel")
 }
 
 record(ai, "$(C):$(P):S2WQUALITY_$(Ch)"){
 	field(DESC, "Cosine quality")
-	field(DTYPE, "Soft Channel")
 }
 
 

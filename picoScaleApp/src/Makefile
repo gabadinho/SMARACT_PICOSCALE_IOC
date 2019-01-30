@@ -30,7 +30,7 @@ picoScale_DBD += base.dbd
 picoScale_DBD += asyn.dbd
 picoScale_DBD += drvAsynIPPort.dbd
 picoScale_DBD += genSubRecord.dbd
-picoScale_DBD += picoScale.dbd
+picoScale_DBD += picoScale_functions.dbd
 
 picoScale_LIBS += asyn genSub
 

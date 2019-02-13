@@ -1,0 +1,7 @@
+epicsEnvSet("ARCH","linux-x86_64")
+epicsEnvSet("IOC","iocpicoScale")
+epicsEnvSet("TOP","/home/ABTLUS/allan.bugyi/work/dev/iocs/SMARACT_PICOSCALE_IOC")
+epicsEnvSet("SUPPORT","/usr/local/epics/synApps_5_8/support")
+epicsEnvSet("ASYN","/usr/local/epics/synApps_5_8/support/asyn-4-26")
+epicsEnvSet("GENSUB","/usr/local/epics/synApps_5_8/support/genSubV1-8")
+epicsEnvSet("EPICS_BASE","/usr/local/epics/base")

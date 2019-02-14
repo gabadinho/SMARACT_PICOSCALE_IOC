@@ -1,3 +1,4 @@
+#include<cstdlib>
 #include <iostream>
 #include <string.h>
 #include <vector>
@@ -79,10 +80,29 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(workingdistmax_longOutValueString, asynParamInt32, &workingdistmax_longOutValue);
 	createParam(fiberlength_longOutValueString, asynParamInt32, &fiberlength_longOutValue);
 
-	setStringParam(ip_stringOutValue, ip);
-	callParamCallbacks();
+	init(ip);
 }
-// --- Extended methods ---
+
+void PicoScaledrv::init(const char *ip){
+
+	//connection routine
+	const char *locator_part1 = "network:";
+	const char *locator_part2 = ":55555";
+        char *locator	= (char*) calloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) + 1, sizeof(char));
+	strcpy(locator, locator_part1);
+	strcat(locator, ip);
+	strcat(locator, locator_part2);
+
+	result = (SA_SI_Open(&handle, locator,""));
+	
+	if (result != SA_SI_OK)
+    	{
+		cout << "Could not connect to device. Check ERROR record.";
+		system("PAUSE");
+	}
+}
+
+// --- AsynPortDriver extended methods ---
 asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 	    int function = pasynUser->reason;
 	    int addr=0;
@@ -158,6 +178,11 @@ asynStatus PicoScaledrv::writeOctet(asynUser *pasynUser, const char *value, size
 	    static const char *functionName = "writeOctet";
 
 	    status = getAddress(pasynUser, &addr); if (status != asynSuccess) return(status);
+
+	    if(function==ip_stringOutValue){
+		cout << "passei por aqui";
+		picoScale_open();
+	    }
 
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus)setStringParam(addr, function, (char *)value);
@@ -342,9 +367,9 @@ unsigned int PicoScaledrv::receiveStreamBuffer(SA_SI_Handle handle, unsigned int
 }
 
 unsigned int PicoScaledrv::picoScale_open()
-{/*
+{
 	char *ip;
-	picoScaledrv->getIp_stringOutValue(ip);
+	getStringParam(ip_stringOutValue, 15, ip);
 	
 	const char *locator_part1 = "network:";
 	const char *locator_part2 = ":55555";
@@ -358,13 +383,13 @@ unsigned int PicoScaledrv::picoScale_open()
 	if (result != SA_SI_OK)
     	{
 		//error
-		picoScaledrv->setConnectionStatus_binaryOutValue(0);
-		picoScaledrv->callParamCallbacks();
+		//picoScaledrv->setConnectionStatus_binaryOutValue(0);
+		//picoScaledrv->callParamCallbacks();
 		cout << "Could not connect to device. Check ERROR record.";
 		return 1; //returning 1 so subroutine record stops processing
     	}
-	picoScaledrv->setConnectionStatus_binaryOutValue(1);
-	picoScaledrv->callParamCallbacks();*/
+	//picoScaledrv->setConnectionStatus_binaryOutValue(1);
+	//callParamCallbacks();*/
 	return result;
 }
 
@@ -680,7 +705,14 @@ unsigned int PicoScaledrv::picoScale_adjust(){
 //--- Create driver function
 extern "C" int PicoScaleCreateDriver(const char *portName, const char *ip){
 	PicoScaledrv *picoScaledrv = new PicoScaledrv(portName, ip);
-	picoScaledrv = NULL;
+	//size_t *nActual;
+	//*nActual = strlen(ip);
+	//picoScaledrv->writeOctet(this->pasynUserSelf, ip, 15, nActual);
+	//setStringParam(ip_stringOutValue, ip);
+	
+	//callParamCallbacks();
+	//picoScale_open();
+	//picoScaledrv = NULL;
 	return(asynSuccess);
 }
 

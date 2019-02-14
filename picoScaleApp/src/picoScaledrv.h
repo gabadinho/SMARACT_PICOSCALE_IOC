@@ -85,6 +85,7 @@ class PicoScaledrv : public asynPortDriver {
 	public:
 		PicoScaledrv();
 		PicoScaledrv(const char *portName, const char *ip);
+		void init(const char *ip);
 		
 		//AsynPortDriver methods extended
 		virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);

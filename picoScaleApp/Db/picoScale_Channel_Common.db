@@ -6,7 +6,7 @@ record(waveform, "$(C):$(P):POS_$(Ch)"){
 	field(EGU, "nm")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POS_$(Ch)_WAVEFORM_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POS_CH$(Ch)_WAVEFORM_VAL")
 }
 
 record(waveform, "$(C):$(P):VEL_$(Ch)"){
@@ -15,7 +15,7 @@ record(waveform, "$(C):$(P):VEL_$(Ch)"){
 	field(EGU, "m/s")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))VEL_$(Ch)_WAVEFORM_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))VEL_CH$(Ch)_WAVEFORM_VAL")
 }
 
 record(waveform, "$(C):$(P):ACC_$(Ch)"){
@@ -24,31 +24,31 @@ record(waveform, "$(C):$(P):ACC_$(Ch)"){
 	field(EGU, "m/s^2")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))ACC_$(Ch)_WAVEFORM_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))ACC_CH$(Ch)_WAVEFORM_VAL")
 }
 
 record(ai, "$(C):$(P):SWRAW_$(Ch)"){
 	field(DESC, "Sine raw $(Ch)")
 	field(DTYP, "asynFloat64")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SWRAW_$(Ch)_ANALOGIN_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SWRAW_CH$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):S2WRAW_$(Ch)"){
 	field(DESC, "Cosine raw $(Ch)")
 	field(DTYP, "asynFloat64")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))S2WRAW_$(Ch)_ANALOGIN_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))S2WRAW_CH$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):SWQUALITY_$(Ch)"){
 	field(DESC, "Sine quality $(Ch)")
 	field(DTYP, "asynFloat64")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SWQUALITY_$(Ch)_ANALOGIN_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SWQUALITY_CH$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):S2WQUALITY_$(Ch)"){
 	field(DESC, "Cosine quality $(Ch)")
 	field(DTYP, "asynFloat64")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))S2WQUALITY_$(Ch)_ANALOGIN_VAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))S2WQUALITY_CH$(Ch)_ANALOGIN_VAL")
 }
 
 

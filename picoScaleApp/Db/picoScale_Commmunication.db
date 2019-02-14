@@ -1,6 +1,6 @@
 record(stringout, "$(C):$(P):IP"){
 	field(DESC, "Device IP address for connecting")
-	field(DTYP, "asynOctetWrite")
+	field(DTYP, "asynOctet")
 	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))IP_STRINGOUT_VAL")
 }
 
@@ -8,20 +8,20 @@ record(bi, "$(C):$(P):FULL_ACCESS"){
 	field(DESC, "Connection type")
 	field(DTYP, "asynInt32")
 	field(VAL, "0")	
-	field(PINI, "YES")
 	field(ZNAM, "Without full-access")
 	field(ONAM, "Full-access connection")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FULLACCESS_BINARYINVAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FULLACCESS_BINARYINVAL")
+	field(SCAN, "I/O Intr")
 }
 
 record(bi, "$(C):$(P):CONNECTION_STATUS"){
 	field(DESC, "Connected-Not Connected")
 	field(DTYP, "asynInt32")
 	field(VAL, "0")
-	field(PINI, "YES")
 	field(ZNAM, "Not Connected")
 	field(ONAM, "Connected")
-	field(INP, "asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))CONNECTIONSTATUS_BINARYINVAL")
+	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))CONNECTIONSTATUS_BINARYINVAL")
+	field(SCAN, "I/O Intr")
 }
 
 record(longout, "$(C):$(P):FRAMERATE"){
@@ -32,6 +32,7 @@ record(longout, "$(C):$(P):FRAMERATE"){
 	field(EGU, "Hz")
 	field(HOPR, "10000000")
 	field(LOPR, "1")
+	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FRAMERATE_LONGOUT_VAL")
 }
 
 record(longout, "$(C):$(P):BUFFERS"){
@@ -66,18 +67,18 @@ record(bo, "$(C):$(P):INTERLEAVING"){
 	field(ZNAM, "Disabled")
 	field(ONAM, "Enabled")
 	field(PINI, "YES")
-	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))INTERLEAVING_BO_VAL")
+	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))INTERLEAVING_BINARYOUT_VAL")
 }
 
-record(bi, "$(C):$(P):STREAM_STATUS"){
-	field(DESC, "Stream Active-Inactive")
-	field(DTYP, "asynInt32")
-	field(VAL, "0")
-	field(PINI, "YES")
-	field(ZNAM, "Stream inactive")
-	field(ONAM, "Stream active")
-	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))INTERLEAVING_BO_VAL")
-}
+#record(bi, "$(C):$(P):STREAM_STATUS"){
+#	field(DESC, "Stream Active-Inactive")
+#	field(DTYP, "asynInt32")
+#	field(VAL, "0")
+#	field(PINI, "YES")
+#	field(ZNAM, "Stream inactive")
+#	field(ONAM, "Stream active")
+#	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))INTERLEAVING_BO_VAL")
+#}
 
 record(mbbo, "$(C):$(P):CHANNELINDX"){
 	field(DESC, "Channel index")

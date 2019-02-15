@@ -1,11 +1,12 @@
 # PicoScale's datasources
 
-record(waveform, "$(C):$(P):POS_$(Ch)"){
+record(longin, "$(C):$(P):POS_$(Ch)"){
 	field(DESC, "Position $(Ch)")
-	field(DTYP, "asynFloat64ArrayIn")
-	field(EGU, "nm")
-	field(NELM, "10000000")
-	field(FTVL, "DOUBLE")
+	#field(DTYP, "asynFloat64ArrayIn")
+	field(DTYP, "asynInt32")
+	#field(EGU, "nm")
+	#field(NELM, "10000000")
+	#field(FTVL, "DOUBLE")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POS_CH$(Ch)_WAVEFORM_VAL")
 }
 

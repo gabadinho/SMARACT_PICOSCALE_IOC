@@ -1,2 +1,2 @@
 registrar(drvPicoScaleRegister)
-registrar(initPicoScaleRegister)
+#registrar(initPicoScaleRegister)

@@ -27,8 +27,8 @@ dbLoadRecords ("db/picoScale_Commmunication.db", "C=CATERETE, P=PICOSCALE, PORTN
 ## Run this to trace the stages of iocInit
 #traceIocInit
 
-PicoScaleCreateDriver("eth0", "10.0.9.0")
-PicoScaleInitializingRoutinesRun()
+PicoScaleCreateDriver("eth0", "10.0.9.68")
+#PicoScaleInitializingRoutinesRun()
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit

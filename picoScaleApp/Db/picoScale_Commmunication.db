@@ -1,6 +1,6 @@
 record(stringout, "$(C):$(P):IP"){
 	field(DESC, "Device IP address for connecting")
-	field(DTYP, "asynOctet")
+	field(DTYP, "asynOctetWrite")
 	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))IP_STRINGOUT_VAL")
 }
 
@@ -30,9 +30,17 @@ record(longout, "$(C):$(P):FRAMERATE"){
 	field(VAL, "1")
 	field(PINI, "YES")
 	field(EGU, "Hz")
-	field(HOPR, "10000000")
-	field(LOPR, "1")
+	#field(HOPR, "10000000")
+	#field(LOPR, "1")
 	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FRAMERATE_LONGOUT_VAL")
+}
+
+record(longout, "$(C):$(P):FRAMEAGGR"){
+	field(DESC, "Frame aggregation")
+	field(DTYP, "asynInt32")
+	field(VAL, "1")
+	field(PINI, "YES")
+	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FRAMEAGGR_LONGOUTVAL")
 }
 
 record(longout, "$(C):$(P):BUFFERS"){
@@ -48,7 +56,6 @@ record(longout, "$(C):$(P):BUFFERS"){
 record(mbbo, "$(C):$(P):BUFFERAGGR"){
 	field(DESC, "Stream buffer aggregation")
 	field(DTYP, "asynInt32")
-	field(VAL, "0")
 	field(ZRVL, "0")
 	field(ONVL, "32")
 	field(TWVL, "64")
@@ -56,7 +63,13 @@ record(mbbo, "$(C):$(P):BUFFERAGGR"){
 	field(FRVL, "256")
 	field(FVVL, "512")
 	field(SXVL, "1024")
-	field(PINI, "YES")
+	field(ZRST, "0")
+	field(ONST, "32")
+	field(TWST, "64")
+	field(THST, "128")
+	field(FRST, "256")
+	field(FVST, "512")
+	field(SXST, "1024")
 	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))BUFFERAGGR_MBBO_VAL")
 }
 
@@ -77,7 +90,7 @@ record(bo, "$(C):$(P):INTERLEAVING"){
 #	field(PINI, "YES")
 #	field(ZNAM, "Stream inactive")
 #	field(ONAM, "Stream active")
-#	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))INTERLEAVING_BO_VAL")
+#	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 record(mbbo, "$(C):$(P):CHANNELINDX"){
@@ -125,7 +138,7 @@ record(mbbo, "$(C):$(P):STREAM_MODE"){
 	field(ZRST, "Stream")
 	field(ONST, "Stream PVA All Chanls")
 	field(TWST, "Stream Pos. All Chanls")
-	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))DATASRCINDX_MBBO_VAL")
+	field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))STREAMMODE_MBBO_VAL")
 }
 
 

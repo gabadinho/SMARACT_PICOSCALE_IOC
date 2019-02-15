@@ -51,6 +51,7 @@
 //Communication parameters
 #define ip_stringOutValueString			"IP_STRINGOUT_VAL"
 #define framerate_longOutValueString		"FRAMERATE_LONGOUT_VAL"
+#define frameaggr_longOutValueString		"FRAMEAGGR_LONGOUTVAL"
 #define bufferaggr_mbboValueString		"BUFFERAGGR_MBBO_VAL"
 #define buffersnum_longOutValueString		"BUFFERSNUM_LONGOUT_VAL"
 #define interleaving_binaryOutValueString	"INTERLEAVING_BINARYOUT_VAL"
@@ -83,7 +84,7 @@ static const char *driverName = "picoScaledrv";
 
 class PicoScaledrv : public asynPortDriver {
 	public:
-		PicoScaledrv();
+		//PicoScaledrv();
 		PicoScaledrv(const char *portName, const char *ip);
 		void init(const char *ip);
 		
@@ -93,12 +94,14 @@ class PicoScaledrv : public asynPortDriver {
 		virtual asynStatus writeOctet(asynUser *pasynUser, const char *value, size_t maxChars, size_t *nActual);
 		//virtual asynStatus writeFloat64Array(asynUser *pasynUser, epicsFloat64 *value, size_t nElements);	
 		
-		//SmarAct library calls
+		//SmarAct
+		void appendValue(void *pValue);
 		int32_t getDataSize(int32_t dataType);
 		unsigned int configureStream(SA_SI_Handle handle);
 		void processBuffer(const SA_SI_DataBuffer *buffer, vector<int32_t> datasrcs_dataSizes, int32_t frameSize);
 		unsigned int receiveStreamBuffer(SA_SI_Handle handle, unsigned int timeout, bool &lastFrame, vector<int32_t> datasrcs_dataSizes, int32_t frameSize);
-		unsigned int picoScale_open();
+		unsigned int PicoScaleInitializingRoutinesRun();
+		unsigned int picoScale_open(const char *ip);
 		unsigned int picoScale_close();
 		unsigned int picoScale_setFullAccess();
 		unsigned int picoScale_setFramerate();
@@ -107,11 +110,6 @@ class PicoScaledrv : public asynPortDriver {
 		unsigned int picoScale_streamPosition_allChannels();
 		unsigned int picoScale_poll();
 		unsigned int picoScale_adjust();
-
-		//variables
-		unsigned int result; //receives an hex code from every SmarAct function return that may represent success for the operation (SA_SI_OK or 0x00) or specific error code
-		SA_SI_Handle handle;		
-		const SA_SI_DataBuffer *pBuffer; //the buffer that will receive the streamed data
 
 		// A union to store different types in one variable
 		union VariantValue
@@ -148,7 +146,7 @@ class PicoScaledrv : public asynPortDriver {
 		    DataSourceAddress_t address;
 		    int32_t dataType;
 		    int32_t dataSize;
-		};
+		}dataSource;
 
 		struct DataSourceData_t {
 		    vector<VariantValue> data;
@@ -169,6 +167,15 @@ class PicoScaledrv : public asynPortDriver {
 		    int32_t frameRate;
 		    int32_t numberOfStreamBuffers;
 		}streamConfig;
+
+		//variables
+		bool firstExe = true;
+		unsigned int result; //receives an hex code from every SmarAct function return that may represent success for the operation (SA_SI_OK or 0x00) or specific error code
+		SA_SI_Handle handle;		
+		const SA_SI_DataBuffer *pBuffer; //the buffer that will receive the streamed data
+		int32_t dataSourceP0, dataSourceV0, dataSourceA0, dataSourceP1, dataSourceV1, dataSourceA1, dataSourceP2, dataSourceV2, dataSourceA2; //datasources' indexes
+		vector<int32_t> stream_datasrcs_sizes, streamPVA_allchannels_datasrcs_sizes, streamPosition_allchannels_datasrcs_sizes; //vectors containing datasources' sizes for the offset parameter used in 			interleaved mode
+		int32_t streamPVA_allchannels_frame_size = 0, streamPosition_allchannels_frame_size = 0; //frame size based on the sum of the datasources' sizes
 
 	protected:
 		// --- Input parameters ---
@@ -224,6 +231,7 @@ class PicoScaledrv : public asynPortDriver {
 		//Communication parameters
 		int ip_stringOutValue;
 		int framerate_longOutValue;
+		int frameaggr_longOutValue;
 		int bufferaggr_mbboValue;
 		int buffersnum_longOutValue;
 		int interleaving_binaryOutValue;
@@ -231,7 +239,7 @@ class PicoScaledrv : public asynPortDriver {
 		int datasrcindx_mbboValue;
 		int streammode_mbboValue;
 
-		// --- Adjustment parameters ---
+		//Adjustment parameters
 		int workingdistmin_longOutValue;
 		int workingdistmax_longOutValue;
 		int fiberlength_longOutValue;
@@ -239,7 +247,5 @@ class PicoScaledrv : public asynPortDriver {
 };
 
 //Globals
-//PicoScaledrv *picoScaledrv; //AsynPortDriver object that will allows us to call inside functions from subroutine records' defined functions
-int32_t dataSourceP0, dataSourceV0, dataSourceA0, dataSourceP1, dataSourceV1, dataSourceA1, dataSourceP2, dataSourceV2, dataSourceA2; //datasources' indexes
-vector<int32_t> stream_datasrcs_sizes, streamPVA_allchannels_datasrcs_sizes, streamPosition_allchannels_datasrcs_sizes; //vectors containing datasources' sizes for the offset parameter used in interleaved mode
-int32_t streamPVA_allchannels_frame_size = 0, streamPosition_allchannels_frame_size = 0; //frame size based on the sum of the datasources' sizes
+
+

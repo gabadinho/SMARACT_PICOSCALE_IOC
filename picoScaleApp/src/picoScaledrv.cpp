@@ -24,7 +24,7 @@
 //------------------------------------------ AsynPortDriver ------------------------------------------
 PicoScaledrv::PicoScaledrv(const char *portName, const char *ip) 
 	: asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
-	asynInt32Mask | asynFloat64Mask | asynFloat64ArrayMask | asynDrvUserMask,// Interfaces that we implement
+	asynInt32Mask | asynFloat64Mask | asynFloat64ArrayMask | asynOctetMask | asynDrvUserMask,// Interfaces that we implement
 	asynInt32Mask | asynFloat64Mask | asynFloat64ArrayMask,	// Interfaces that do callbacks
 	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1, /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
 	0, 0) /* Default priority and stack size */
@@ -70,6 +70,7 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(fullaccess_binaryInValueString, asynParamInt32, &fullaccess_binaryInValue);
 	createParam(connectionStatus_binaryInValueString, asynParamInt32, &connectionStatus_binaryInValue); 
 	createParam(framerate_longOutValueString, asynParamInt32, &framerate_longOutValue);
+	createParam(frameaggr_longOutValueString, asynParamInt32, &frameaggr_longOutValue);
 	createParam(bufferaggr_mbboValueString, asynParamInt32, &bufferaggr_mbboValue);
 	createParam(buffersnum_longOutValueString, asynParamInt32, &buffersnum_longOutValue);
 	createParam(interleaving_binaryOutValueString, asynParamInt32, &interleaving_binaryOutValue);
@@ -80,26 +81,7 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(workingdistmax_longOutValueString, asynParamInt32, &workingdistmax_longOutValue);
 	createParam(fiberlength_longOutValueString, asynParamInt32, &fiberlength_longOutValue);
 
-	init(ip);
-}
-
-void PicoScaledrv::init(const char *ip){
-
-	//connection routine
-	const char *locator_part1 = "network:";
-	const char *locator_part2 = ":55555";
-        char *locator	= (char*) calloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) + 1, sizeof(char));
-	strcpy(locator, locator_part1);
-	strcat(locator, ip);
-	strcat(locator, locator_part2);
-
-	result = (SA_SI_Open(&handle, locator,""));
-	
-	if (result != SA_SI_OK)
-    	{
-		cout << "Could not connect to device. Check ERROR record.";
-		system("PAUSE");
-	}
+	picoScale_open(ip);
 }
 
 // --- AsynPortDriver extended methods ---
@@ -110,32 +92,27 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 	    const char* functionName = "writeInt32";
 
 	    status = getAddress(pasynUser, &addr); if (status != asynSuccess) return(status);
-/*
-	    switch(function){
-		streammode_mbboValue:
-			switch(value){
-				0: 
-					picoScale_stream();
-				break;
-				1: picoScale_streamPVA_allChannels();
-				break;
-				2: picoScale_streamPosition_allChannels();
-				break;
-			};
-		break;
-	    };*/
-	    if(function==streammode_mbboValue){
-		if(value==0){
-			picoScale_stream();
-		}
-	    }
 
 	    /* Set the parameter in the parameter library. */
 	    status = (asynStatus) setIntegerParam(addr, function, value);
+		
+		if(function==framerate_longOutValue){
+			picoScale_setFramerate();
+	    	}else if(function==channelindx_mbboValue){
+			dataSource.address.channelIndex = (uint8_t) value;
+		}else if(function==datasrcindx_mbboValue){
+			dataSource.address.dataSourceIndex = (uint8_t) value;
+		}else if(function==streammode_mbboValue){
+			if(value==0){
+				cout<<"EH NOIS NA FITA";
+				picoScale_stream();
+			}
+	    	}
+
 
 	    /* Do callbacks so higher layers see any changes */
 	    status = (asynStatus) callParamCallbacks(addr, addr);
-	    
+
 	    if (status) 
 		epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize, 
 		          "%s:%s: status=%d, function=%d, value=%d", 
@@ -181,7 +158,7 @@ asynStatus PicoScaledrv::writeOctet(asynUser *pasynUser, const char *value, size
 
 	    if(function==ip_stringOutValue){
 		cout << "passei por aqui";
-		picoScale_open();
+		//picoScale_open();
 	    }
 
 	    /* Set the parameter in the parameter library. */
@@ -203,10 +180,92 @@ asynStatus PicoScaledrv::writeOctet(asynUser *pasynUser, const char *value, size
 }
 
 /*asynStatus PicoScaledrv::writeFloat64Array(asynUser *pasynUser, epicsFloat64 *value, size_t nElements){
- return asynStatus;
+	return asynStatus;
 }*/
 
 // ----------------------------
+
+void PicoScaledrv::appendValue(void *pValue)
+{
+	int aux;
+    VariantValue v;
+/*
+    switch (dataSource.dataType)
+    {
+        case SA_SI_INT8_DTYPE:
+            v.i8value = *(const int8_t*)(pValue);
+		cout<<v.i8value<<"\n";
+            break;
+        case SA_SI_UINT8_DTYPE:
+            v.u8value = *(const uint8_t*)(pValue);
+		cout<<v.u8value<<"\n";
+            break;
+        case SA_SI_INT16_DTYPE:
+            v.i16value = *(const int16_t*)(pValue);
+		cout<<v.i16value<<"\n";
+            break;
+        case SA_SI_UINT16_DTYPE:
+            v.u16value = *(const uint16_t*)(pValue);
+		cout<<v.u16value<<"\n";
+            break;
+        case SA_SI_INT32_DTYPE:
+            v.i32value = *(const int32_t*)(pValue);
+		cout<<v.i32value<<"\n";
+            break;
+        case SA_SI_UINT32_DTYPE:
+            v.u32value = *(const uint32_t*)(pValue);
+		cout<<v.u32value<<"\n";
+            break;
+        case SA_SI_INT48_DTYPE:
+            v.i48value = *(const int64_t*)(pValue);
+		cout<<"Como eu esperava: "<<v.i48value<<"\n";
+            break;
+        case SA_SI_UINT48_DTYPE:
+            v.u48value = *(const uint64_t*)(pValue);
+		cout<<v.u48value<<"\n";
+            break;
+        case SA_SI_INT64_DTYPE:
+            v.i64value = *(const int64_t*)(pValue);
+		cout<<"Como eu esperava: "<<v.i64value<<"\n";
+            break;
+        case SA_SI_UINT64_DTYPE:
+            v.u64value = *(const uint64_t*)(pValue);
+		cout<<"Como eu esperava: "<<v.u64value<<"\n";
+            break;
+        case SA_SI_FLOAT32_DTYPE:
+            v.f32value = *(const float*)(pValue);
+		cout<<v.f32value<<"\n";
+            break;
+        case SA_SI_FLOAT64_DTYPE:
+            v.f64value = *(const double*)(pValue);
+		cout<<v.f64value<<"\n";
+            break;
+        default:
+            // shouldn't happen
+            v.i32value = 0;
+            break;
+    }
+*/
+	switch(dataSource.address.channelIndex){
+		case 0:
+			switch(dataSource.address.dataSourceIndex){
+				case 0:
+					
+					v.i48value = *(const int64_t*)(pValue);
+					aux = (int) v.i48value;//<<32;
+					//cout<<aux<<"\n";
+					setIntegerParam(pos_ch0_waveformValue, aux); 
+					//callParamCallbacks();
+					//cout<<v.i48value<<"\n";
+				break;
+			}
+		break;
+		case 1:
+		break;
+		case 2:
+		break;
+	}
+}
 
 int32_t PicoScaledrv::getDataSize(int32_t dataType)
 {
@@ -242,6 +301,15 @@ unsigned int PicoScaledrv::configureStream(SA_SI_Handle handle)
     // prepare stream data container for received data
     //streamData.dataSource.resize(streamConfig.enabledDataSources.size());
     // configure frame aggregation
+
+	cout<<"CONFIG_STREAM"<<"\n";
+	cout<<"Frame aggregation: " <<streamConfig.frameAggregation<<"\n";
+	cout<<"Frame rate: "<<streamConfig.frameRate<<"\n";
+	cout<<"Buffer Aggregation: "<<streamConfig.streamBufferAggregation<<"\n";
+	cout<<"Interleaving: "<<streamConfig.interleavingEnabled<<"\n";
+	cout<<"Num Buffers: "<<streamConfig.numberOfStreamBuffers;
+	cout<<"\n";
+
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_AGGREGATION_PROP,0,0),streamConfig.frameAggregation);
     if (result != SA_SI_OK){
         return result;
@@ -294,10 +362,11 @@ void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer, vector<int32_t>
         for (unsigned int frame = 0; frame<buffer->info.numberOfFrames; frame++)
         {
             int32_t offset = 0;
-            for (size_t dataSource=0; dataSource < buffer->info.numberOfSources; dataSource++)
+            for (size_t dataSourceIterator=0; dataSourceIterator < buffer->info.numberOfSources; dataSourceIterator++)
             {
                 void *dataSourceValue = &buffer->data[0][frame*frameSize + offset];
-                offset += datasrcs_dataSizes[dataSource];
+                offset += datasrcs_dataSizes[dataSourceIterator];
+		appendValue(dataSourceValue);
             }
         }
     }
@@ -318,13 +387,13 @@ void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer, vector<int32_t>
         // buffer->data[0] has a frame size of 8 and buffer->data[1] has a frame
         // size of 2.
 	//long int var = 0;	
-        for (size_t dataSource = 0; dataSource < buffer->info.numberOfSources; dataSource++)
+        for (size_t dataSourceIterator = 0; dataSourceIterator < buffer->info.numberOfSources; dataSourceIterator++)
         {
             for (unsigned int frame = 0; frame < buffer->info.numberOfFrames; frame++)
 	    {
 		//fprintf(fp, "%li\n", var);
 		//fputc(((int) buffer->data[dataSource][frame*streamConfig.enabledDataSources[dataSource].dataSize]), fp);
-                void *dataSourceValue = &buffer->data[dataSource][frame*datasrcs_dataSizes[dataSource]];
+                void *dataSourceValue = &buffer->data[dataSourceIterator][frame*datasrcs_dataSizes[dataSourceIterator]];
             }
         }
 	//fclose(fp);
@@ -366,11 +435,8 @@ unsigned int PicoScaledrv::receiveStreamBuffer(SA_SI_Handle handle, unsigned int
     return SA_SI_OK;
 }
 
-unsigned int PicoScaledrv::picoScale_open()
-{
-	char *ip;
-	getStringParam(ip_stringOutValue, 15, ip);
-	
+unsigned int PicoScaledrv::picoScale_open(const char *ip)
+{	
 	const char *locator_part1 = "network:";
 	const char *locator_part2 = ":55555";
         char *locator	= (char*) calloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) + 1, sizeof(char));
@@ -382,14 +448,10 @@ unsigned int PicoScaledrv::picoScale_open()
 	
 	if (result != SA_SI_OK)
     	{
-		//error
-		//picoScaledrv->setConnectionStatus_binaryOutValue(0);
-		//picoScaledrv->callParamCallbacks();
 		cout << "Could not connect to device. Check ERROR record.";
-		return 1; //returning 1 so subroutine record stops processing
+		return 1;
     	}
-	//picoScaledrv->setConnectionStatus_binaryOutValue(1);
-	//callParamCallbacks();*/
+	
 	return result;
 }
 
@@ -406,13 +468,19 @@ unsigned int PicoScaledrv::picoScale_close()
 }
 
 unsigned int PicoScaledrv::picoScale_setFramerate()
-{/*
-	streamConfig.frameRate = (int32_t) psub->a;
+{
+	if(firstExe==false) getIntegerParam(framerate_longOutValue, &streamConfig.frameRate);
+	else {
+		streamConfig.frameRate=1;
+		firstExe=false;
+	}
 
+	cout << "Frame rate: " << streamConfig.frameRate << "\n";
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_RATE_PROP,0,0), streamConfig.frameRate);
 	
 	if (result != SA_SI_OK){
 		//error
+		cout<<"Erro: " << result;
 		return 1; //returning 1 so subroutine record stops processing
     	}
 	
@@ -425,9 +493,8 @@ unsigned int PicoScaledrv::picoScale_setFramerate()
     	}
 
 	streamConfig.frameRate = (int32_t) preciseFrameRate;
-	picoScaledrv->setFramerate_longOutValue((int) preciseFrameRate);//updates framerate record
-	picoScaledrv->callParamCallbacks();
-
+	setIntegerParam(framerate_longOutValue, (int) preciseFrameRate);
+	cout<<"Precise fram rate: " << streamConfig.frameRate;
 	//frame aggregation based on framerate value accordingly to the Programming guide
 	switch(streamConfig.frameRate){
 		case 1:
@@ -478,35 +545,38 @@ unsigned int PicoScaledrv::picoScale_setFramerate()
 		case 1250000:
 			streamConfig.frameAggregation = (int32_t) 1024;
 		break;
-	}*/
+	}
+	int frameggr = (int) streamConfig.frameAggregation;
+	setIntegerParam(frameaggr_longOutValue, frameggr);
+	callParamCallbacks();
+	cout << "Somos vencedores";
 	return result;
 }
 
 unsigned int PicoScaledrv::picoScale_stream(){ //method for streaming a single datasource
-	/*DataSource_t dataSource;
 	bool lastFrame = false;
-	int *channelIndex, *datasrcIndex, *interleavingMode, *bufferAggr, *buffersNum;
+	int channelIndex, datasrcIndex, interleavingMode, bufferAggr, buffersNum;
 
-	picoScaledrv->getChannelindx_mbboValue(channelIndex);
-	picoScaledrv->getDatasrcindx_mbboValue(datasrcIndex);
+	getIntegerParam(channelindx_mbboValue, &channelIndex);
+	getIntegerParam(datasrcindx_mbboValue, &datasrcIndex);
 
-	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, *channelIndex, *datasrcIndex),&dataSource.dataType,0); 
+	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, channelIndex, datasrcIndex),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
 		//error
 		return result;
 	}
 
 	dataSource.dataSize = getDataSize(dataSource.dataType);
-	dataSource.address.channelIndex = *channelIndex;
-	dataSource.address.dataSourceIndex = *datasrcIndex;
+	dataSource.address.channelIndex = channelIndex;
+	dataSource.address.dataSourceIndex = datasrcIndex;
 	
-	picoScaledrv->getInterleaving_binaryOutValue(interleavingMode);
-	picoScaledrv->getBufferaggr_mbboValue(bufferAggr);
-	picoScaledrv->getBuffersnum_longOutValue(buffersNum);
+	getIntegerParam(interleaving_binaryOutValue, &interleavingMode);
+	getIntegerParam(bufferaggr_mbboValue, &bufferAggr);
+	getIntegerParam(buffersnum_longOutValue, &buffersNum);
 
-	streamConfig.interleavingEnabled = (bool) *interleavingMode;
-    	streamConfig.streamBufferAggregation = *bufferAggr;
-    	streamConfig.numberOfStreamBuffers = *buffersNum;
+	streamConfig.interleavingEnabled = (bool) interleavingMode;
+    	streamConfig.streamBufferAggregation = bufferAggr;
+    	streamConfig.numberOfStreamBuffers = buffersNum;
 
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
 	if (result != SA_SI_OK){
@@ -529,6 +599,7 @@ unsigned int PicoScaledrv::picoScale_stream(){ //method for streaming a single d
         	return result;
 	}	
 	
+	cout <<"AQUI MEU BEM";
 	stream_datasrcs_sizes = {dataSource.dataSize};
 
 	while (!lastFrame)
@@ -541,7 +612,6 @@ unsigned int PicoScaledrv::picoScale_stream(){ //method for streaming a single d
 	
 	result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_DISABLED);
     	if (result != SA_SI_OK) return result; //error
-*/
 	return SA_SI_OK;	
 }
 
@@ -705,14 +775,6 @@ unsigned int PicoScaledrv::picoScale_adjust(){
 //--- Create driver function
 extern "C" int PicoScaleCreateDriver(const char *portName, const char *ip){
 	PicoScaledrv *picoScaledrv = new PicoScaledrv(portName, ip);
-	//size_t *nActual;
-	//*nActual = strlen(ip);
-	//picoScaledrv->writeOctet(this->pasynUserSelf, ip, 15, nActual);
-	//setStringParam(ip_stringOutValue, ip);
-	
-	//callParamCallbacks();
-	//picoScale_open();
-	//picoScaledrv = NULL;
 	return(asynSuccess);
 }
 
@@ -735,9 +797,9 @@ extern "C" {
 //---
 
 //--- Initializing routines
-extern "C" int PicoScaleInitializingRoutinesRun(){ //Should be called from st.cmd script right after calling 'PicoScaleCreateDriver(portName)'. This procedure asks PicoScale for each datasource type; in this
-						    //way, it's possible to determine the frame's sizes of streams and, also, distinguish each datasource in a stream in interleaved mode
-	/*
+//extern "C" int 
+unsigned int PicoScaledrv::PicoScaleInitializingRoutinesRun(){ //Should be called from st.cmd script right after calling 'PicoScaleCreateDriver(portName)'. This procedure asks PicoScale for each datasource type; 									in this way, it's possible to determine the frame's sizes of streams and, also, distinguish each datasource in a stream in interleaved mode
+	
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 0),&dataSourceP0,0); 
 	if (result != SA_SI_OK){
 		//error		
@@ -796,7 +858,7 @@ extern "C" int PicoScaleInitializingRoutinesRun(){ //Should be called from st.cm
 						getDataSize(dataSourceP1), getDataSize(dataSourceV1), getDataSize(dataSourceA1),
 						getDataSize(dataSourceP2), getDataSize(dataSourceV2), getDataSize(dataSourceA2)};
 
-	//streamPosition_allchannels_datasrcs_sizes = {getDataSize(dataSourceP0), getDataSize(dataSourceP1), getDataSize(dataSourceP2)};
+	streamPosition_allchannels_datasrcs_sizes = {getDataSize(dataSourceP0), getDataSize(dataSourceP1), getDataSize(dataSourceP2)};
 
 	for(unsigned int i=0; i<streamPVA_allchannels_datasrcs_sizes.size(); i++){
 		streamPVA_allchannels_frame_size += streamPVA_allchannels_datasrcs_sizes[i];	
@@ -805,10 +867,10 @@ extern "C" int PicoScaleInitializingRoutinesRun(){ //Should be called from st.cm
 	for(unsigned int i=0; i<streamPosition_allchannels_datasrcs_sizes.size(); i++){
 		streamPosition_allchannels_frame_size += streamPosition_allchannels_datasrcs_sizes[i];	
 	}
-*/
+
 	return(asynSuccess);
 }
-
+/*
 static const iocshFuncDef initializingRoutinesFuncDef = {"PicoScaleInitializingRoutinesRun"};//, 1, configArgs};
 
 static void initializingRoutinesCallFunc(const iocshArgBuf *args){
@@ -821,7 +883,7 @@ void initPicoScaleRegister(void){
 
 extern "C" {
 	epicsExportRegistrar(initPicoScaleRegister);
-}
+}*/
 //---
 //----------------------------------------------------------------------------------------------------------
 

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string.h>
 #include <vector>
+#include<thread> 
 
 //EPICS includes
 #include <iocsh.h>
@@ -29,7 +30,7 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1, /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
 	0, 0) /* Default priority and stack size */
 {
-	createParam(pos_ch0_waveformValueString, asynParamFloat64, &pos_ch0_waveformValue);
+	createParam(pos_ch0_waveformValueString, asynParamInt32, &pos_ch0_waveformValue);
 	createParam(vel_ch0_waveformValueString, asynParamFloat64, &vel_ch0_waveformValue);
 	createParam(acc_ch0_waveformValueString, asynParamFloat64, &acc_ch0_waveformValue);
 	createParam(swraw_ch0_analogInValueString, asynParamFloat64, &swraw_ch0_analogInValue);
@@ -52,14 +53,14 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(calcSys5_ch0_analogInValueString, asynParamFloat64, &calcSys5_ch0_analogInValue);
 	createParam(calcSys6_ch0_analogInValueString, asynParamFloat64, &calcSys6_ch0_analogInValue);
 	createParam(calcSys7_ch0_analogInValueString, asynParamFloat64, &calcSys7_ch0_analogInValue);*/
-	createParam(pos_ch1_waveformValueString, asynParamFloat64, &pos_ch1_waveformValue);
+	createParam(pos_ch1_waveformValueString, asynParamInt32, &pos_ch1_waveformValue);
 	createParam(vel_ch1_waveformValueString, asynParamFloat64, &vel_ch1_waveformValue);
 	createParam(acc_ch1_waveformValueString, asynParamFloat64, &acc_ch1_waveformValue);
 	createParam(swraw_ch1_analogInValueString, asynParamFloat64, &swraw_ch1_analogInValue);
 	createParam(s2wraw_ch1_analogInValueString, asynParamFloat64, &s2wraw_ch1_analogInValue);
 	createParam(swquality_ch1_analogInValueString, asynParamFloat64, &swquality_ch1_analogInValue);
 	createParam(s2wquality_ch1_analogInValueString, asynParamFloat64, &s2wquality_ch1_analogInValue);
-	createParam(pos_ch2_waveformValueString, asynParamFloat64, &pos_ch2_waveformValue);
+	createParam(pos_ch2_waveformValueString, asynParamInt32, &pos_ch2_waveformValue);
 	createParam(vel_ch2_waveformValueString, asynParamFloat64, &vel_ch2_waveformValue);
 	createParam(acc_ch2_waveformValueString, asynParamFloat64, &acc_ch2_waveformValue);
 	createParam(swraw_ch2_analogInValueString, asynParamFloat64, &swraw_ch2_analogInValue);
@@ -118,6 +119,7 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
                     picoScale_streamPosition_allChannels();
                 }
             }else if(function==streamstop_binaryOutValue){
+		cout<<"ESTAMOS AQUI";
                 int streamStatus;
                 getIntegerParam(streamStatus_binaryInValue, &streamStatus);
 		cout<<streamStatus;
@@ -140,8 +142,7 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 	    return status;
 }
 
-asynStatus asynPortDriver::readInt32(asynUser *pasynUser, epicsInt32 *value)
-{
+asynStatus PicoScaledrv::readInt32(asynUser *pasynUser, epicsInt32 *value){
     int function = pasynUser->reason;
     int addr=0;
     asynStatus status = asynSuccess;
@@ -287,7 +288,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 
 //Record updating
 void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex){
-    double aux_int64_t_prop; //we have to cast the int64_t datatype from PicoScale to EPICS fitting type double 
+    int aux_int64_t_prop; //we have to cast the int64_t datatype from PicoScale to EPICS type long 
     VariantValue v;
 /*
     switch (dataSource.dataType)
@@ -349,23 +350,23 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
     /*  PicoScale's Channel/Data source indexes:
      *  Channel 0
      *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     double
+     *          0           Position    int64_t     long
      *  Channel 1
      *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     double
+     *          0           Position    int64_t     long
      *  Channel 2
      *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     double
+     *          0           Position    int64_t     long
      */
     switch(streamConfig.enabledDataSources[dataSourceIndex].address.channelIndex){
             case 0:
                     switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
                             case 0:
                                     v.i48value = *(const int64_t*)(pValue);
-                                    aux_int64_t_prop = static_cast<double>(v.i48value);
+                                    aux_int64_t_prop = static_cast<int>(v.i48value);
                                     cout<<aux_int64_t_prop<<"\n";
-                                    //setDoubleParam(pos_ch0_waveformValue, aux); 
-                                    //callParamCallbacks();
+                                    setIntegerParam(pos_ch0_waveformValue, aux_int64_t_prop); 
+                                    callParamCallbacks();
                                     //cout<<v.i48value<<"\n";
                             break;
                     }
@@ -375,10 +376,10 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                             case 0:
 
                                     v.i48value = *(const int64_t*)(pValue);
-                                    aux_int64_t_prop = static_cast<double>(v.i48value);
-                                    cout<<aux_int64_t_prop<<"\n";
-                                    //setDoubleParam(pos_ch1_waveformValue, aux); 
-                                    //callParamCallbacks();
+                                    aux_int64_t_prop = static_cast<int>(v.i48value);
+                                    //cout<<aux_int64_t_prop<<"\n";
+                                    setIntegerParam(pos_ch1_waveformValue, aux_int64_t_prop); 
+                                    callParamCallbacks();
                                     //cout<<v.i48value<<"\n";
                             break;
                     }
@@ -388,10 +389,10 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                             case 0:
 
                                     v.i48value = *(const int64_t*)(pValue);
-                                    aux_int64_t_prop = static_cast<double>(v.i48value);
-                                    cout<<aux_int64_t_prop<<"\n";
-                                    //setDoubleParam(pos_ch2_waveformValue, aux); 
-                                    //callParamCallbacks();
+                                    aux_int64_t_prop = static_cast<int>(v.i48value);
+                                    //cout<<aux_int64_t_prop<<"\n";
+                                    setIntegerParam(pos_ch2_waveformValue, aux_int64_t_prop); 
+                                    callParamCallbacks();
                                     //cout<<v.i48value<<"\n";
                             break;
                     }
@@ -739,16 +740,18 @@ void PicoScaledrv::picoScale_stream(){
         return;
     }	
 
-   streamConfig.enabledDataSources = enabled_singledtsrc_stream;
+    streamConfig.enabledDataSources = enabled_singledtsrc_stream;
 
-    while (!lastFrame){
-            result = receiveStreamBuffer(handle, 2000, lastFrame);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.\n";
-                return;
-            }
-    }
+    //std::thread thread_object{
+	    while (!lastFrame){
+		    result = receiveStreamBuffer(handle, 2000, lastFrame);
+		    if (result != SA_SI_OK){
+		        //error
+		        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+		        return;
+		    }
+	    }
+    //};
     picoScale_streamStop();//this is run in case the user hasn't stopped the streaming by himself (EPICS record upper layer) and the streaming's last frame is detected
     return;
 }

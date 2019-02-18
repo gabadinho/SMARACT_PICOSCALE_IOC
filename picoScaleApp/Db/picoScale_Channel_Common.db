@@ -1,18 +1,17 @@
 # PicoScale's datasources
 
-record(longin, "$(C):$(P):POS_$(Ch)"){
+record(waveform, "$(C):$(P):POS_$(Ch)"){
 	field(DESC, "Position $(Ch)")
-	#field(DTYP, "asynFloat64ArrayIn")
-	field(DTYP, "asynInt32")
-	#field(EGU, "nm")
-	#field(NELM, "10000000")
-	#field(FTVL, "DOUBLE")
+	field(DTYP, "Soft Channel")
+	field(EGU, "nm")
+	field(NELM, "10000000")
+	field(FTVL, "DOUBLE")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POS_CH$(Ch)_WAVEFORM_VAL")
 }
 
 record(waveform, "$(C):$(P):VEL_$(Ch)"){
 	field(DESC, "Velocity $(Ch)")
-	field(DTYP, "asynFloat64ArrayIn")
+	field(DTYP, "Soft Channel")
 	field(EGU, "m/s")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")
@@ -21,7 +20,7 @@ record(waveform, "$(C):$(P):VEL_$(Ch)"){
 
 record(waveform, "$(C):$(P):ACC_$(Ch)"){
 	field(DESC, "Acceleration $(Ch)")
-	field(DTYP, "asynFloat64ArrayIn")
+	field(DTYP, "Soft Channel")
 	field(EGU, "m/s^2")
 	field(NELM, "10000000")
 	field(FTVL, "DOUBLE")

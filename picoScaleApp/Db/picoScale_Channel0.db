@@ -1,66 +1,82 @@
 # PicoScale Channel 0 datasources
 
-record(ai, "$(C):$(P):CNTR_ZERO"){
-	field(DESC, "Counter Zero")
-}
-
-record(ai, "$(C):$(P):CNTR_ONE"){
-	field(DESC, "Counter 1")
-}
-
 record(ai, "$(C):$(P):ENV_TEMP"){
 	field(DESC, "Environt. Temp.")
+        field(DTYP, "asynFloat64")
 }
 
 record(ai, "$(C):$(P):ENV_HUM"){
 	field(DESC, "Environt. Hum.")
+        field(DTYP, "asynFloat64")
 }
 
 record(ai, "$(C):$(P):ENV_PRESS"){
 	field(DESC, "Environt. Press.")
+        field(DTYP, "asynFloat64")
 }
 
-record(ai, "$(C):$(P):GPIO_ADC_0"){
-	field(DESC, "GPIO ADC 0")
-}
+#record(ai, "$(C):$(P):CNTR_ZERO"){
+#	field(DESC, "Counter Zero")
+#        field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):GPIO_ADC_1"){
-	field(DESC, "GPIO ADC 1")
-}
+#record(ai, "$(C):$(P):CNTR_ONE"){#
+#	field(DESC, "Counter 1")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):GPIO_ADC_2"){
-	field(DESC, "GPIO ADC 2")
-}
+#record(ai, "$(C):$(P):GPIO_ADC_0"){
+#	field(DESC, "GPIO ADC 0")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_0"){
-	field(DESC, "Calc. Sys. 0")
-}
+#record(ai, "$(C):$(P):GPIO_ADC_1"){
+#	field(DESC, "GPIO ADC 1")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_1"){
-	field(DESC, "Calc. Sys. 1")
-}
+#record(ai, "$(C):$(P):GPIO_ADC_2"){
+#	field(DESC, "GPIO ADC 2")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_2"){
-	field(DESC, "Calc. Sys. 2")
-}
+#record(ai, "$(C):$(P):CALC_SYS_0"){
+#	field(DESC, "Calc. Sys. 0")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_3"){
-	field(DESC, "Calc. Sys. 3")
-}
+#record(ai, "$(C):$(P):CALC_SYS_1"){
+#	field(DESC, "Calc. Sys. 1")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_4"){
-	field(DESC, "Calc. Sys. 4")
-}
+#record(ai, "$(C):$(P):CALC_SYS_2"){
+#	field(DESC, "Calc. Sys. 2")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_5"){
-	field(DESC, "Calc. Sys. 5")
-}
+#record(ai, "$(C):$(P):CALC_SYS_3"){
+#	field(DESC, "Calc. Sys. 3")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_6"){
-	field(DESC, "Calc. Sys. 6")
-}
+#record(ai, "$(C):$(P):CALC_SYS_4"){
+#	field(DESC, "Calc. Sys. 4")
+#       field(DTYP, "asynFloat64")
+#}
 
-record(ai, "$(C):$(P):CALC_SYS_7"){
-	field(DESC, "Calc. Sys. 7")
-}
+#record(ai, "$(C):$(P):CALC_SYS_5"){
+#	field(DESC, "Calc. Sys. 5")
+#       field(DTYP, "asynFloat64")
+#}
+
+#record(ai, "$(C):$(P):CALC_SYS_6"){
+#	field(DESC, "Calc. Sys. 6")
+#       field(DTYP, "asynFloat64")
+#}
+
+#record(ai, "$(C):$(P):CALC_SYS_7"){
+#	field(DESC, "Calc. Sys. 7")
+#       field(DTYP, "asynFloat64")
+#}
 

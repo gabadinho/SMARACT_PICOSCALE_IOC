@@ -78,9 +78,10 @@ class PicoScaledrv : public asynPortDriver {
 		
 		//AsynPortDriver methods extended
 		virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-		
+		virtual asynStatus readInt32(asynUser *pasynUser, epicsInt32 *value);
+
 		//SmarAct's library related
-		void picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue);
+		void picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex);
 		int32_t getDataSize(int32_t dataType);
 		unsigned int configureStream(SA_SI_Handle handle);
 		void processBuffer(const SA_SI_DataBuffer *buffer);
@@ -147,7 +148,7 @@ class PicoScaledrv : public asynPortDriver {
 		struct StreamConfig_t {
 		    vector<DataSource_t> enabledDataSources;
 		    int32_t frameSize;
-		    bool interleavingEnabled;
+		    int32_t interleavingEnabled;
 		    int32_t frameAggregation;
 		    int32_t streamBufferAggregation;
 		    int32_t frameRate;
@@ -156,7 +157,7 @@ class PicoScaledrv : public asynPortDriver {
                 // -------------------------------
                 
 		//Globals
-		bool firstExe = true, lastframe = false;
+		bool firstExe = true, lastFrame = false;
 		unsigned int result; //receives an hex code from every SmarAct function's return that represent success (SA_SI_OK or 0x00) or specific error code (!=SA_SI_OK)
 		SA_SI_Handle handle;	
 		const SA_SI_DataBuffer *pBuffer; //the buffer that will receive the streamed data

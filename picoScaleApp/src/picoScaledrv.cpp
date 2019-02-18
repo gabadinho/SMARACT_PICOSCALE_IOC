@@ -16,6 +16,9 @@
 #include "SmarActSI.h"
 #include "SmarActSIConstants_PS.h"
 
+using namespace std;
+static const char *driverName = "PicoScaledriver";
+
 #include "picoScaledrv.h"
 
 //------------------------------------------ AsynPortDriver ------------------------------------------
@@ -117,6 +120,7 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
             }else if(function==streamstop_binaryOutValue){
                 int streamStatus;
                 getIntegerParam(streamStatus_binaryInValue, &streamStatus);
+		cout<<streamStatus;
                 if(streamStatus==1){
                     picoScale_streamStop();
                 }
@@ -134,6 +138,33 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 		      "%s:%s: function=%d, value=%d\n", 
 		      driverName, functionName, function, value);
 	    return status;
+}
+
+asynStatus asynPortDriver::readInt32(asynUser *pasynUser, epicsInt32 *value)
+{
+    int function = pasynUser->reason;
+    int addr=0;
+    asynStatus status = asynSuccess;
+    epicsTimeStamp timeStamp; getTimeStamp(&timeStamp);
+    static const char *functionName = "readInt32";
+    
+    status = getAddress(pasynUser, &addr); if (status != asynSuccess) return(status);
+    /* We just read the current value of the parameter from the parameter library.
+     * Those values are updated whenever anything could cause them to change */
+    status = (asynStatus) getIntegerParam(addr, function, value);
+
+	
+    /* Set the timestamp */
+    pasynUser->timestamp = timeStamp;
+    if (status) 
+        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize, 
+                  "%s:%s: status=%d, function=%d, value=%d", 
+                  driverName, functionName, status, function, *value);
+    else        
+        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER, 
+              "%s:%s: function=%d, value=%d\n", 
+              driverName, functionName, function, *value);
+    return(status);
 }
 // ----------------------------
 
@@ -243,19 +274,19 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	dataSource.dataSize = getDataSize(dataSource.dataType);
         enabled_PVAdtsrcs_stream.push_back(dataSource);
 
-	for(unsigned int i=0; i<streamPVA_allchannels_datasrcs_sizes.size(); i++){
+	for(unsigned int i=0; i<enabled_PVAdtsrcs_stream.size(); i++){
 		PVA_frame_size += enabled_PVAdtsrcs_stream[i].dataSize;	
 	}
 	
-	for(unsigned int i=0; i<streamPosition_allchannels_datasrcs_sizes.size(); i++){
+	for(unsigned int i=0; i<enabled_Positiondtsrcs_stream.size(); i++){
 		PositionAllChannels_frame_size += enabled_Positiondtsrcs_stream[i].dataSize;	
 	}
 
-	return(asynSuccess);
+	return;
 }
 
 //Record updating
-void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, int dataSourceIndex){
+void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex){
     double aux_int64_t_prop; //we have to cast the int64_t datatype from PicoScale to EPICS fitting type double 
     VariantValue v;
 /*
@@ -468,11 +499,11 @@ void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer){
             for (size_t dataSourceIterator=0; dataSourceIterator < buffer->info.numberOfSources; dataSourceIterator++){
                 void *dataSourceValue = &buffer->data[0][frame*streamConfig.frameSize + offset];
                 offset += streamConfig.enabledDataSources[dataSourceIterator].dataSize;
-		picoScale_dataSourcesValues_EPICSrecordsWriting(dataSourceValue, dataSourceIterator);
+		picoScale_dataSourcesValues_EPICSRecordsWriting(dataSourceValue, dataSourceIterator);
             }
         }
     }
-    else{ // non-interleaving
+    else{ // non-interleaving/*
         // The non-interleaved buffer structure is:
         //                    0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
         //                  +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
@@ -488,13 +519,13 @@ void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer){
         // buffer->data[0] has a frame size of 8 and buffer->data[1] has a frame
         // size of 2.
 	//long int var = 0;	
-        for (size_t dataSourceIterator = 0; dataSourceIterator < buffer->info.numberOfSources; dataSourceIterator++)
+        /*for (size_t dataSourceIterator = 0; dataSourceIterator < buffer->info.numberOfSources; dataSourceIterator++)
         {
             for (unsigned int frame = 0; frame < buffer->info.numberOfFrames; frame++)
 	    {
                 void *dataSourceValue = &buffer->data[dataSourceIterator][frame*datasrcs_dataSizes[dataSourceIterator]];
             }
-        }
+        }*/
     }
     // Note: The following code line is an example how it should *not* be
     // implemented. Printing to standard out is a relatively time consuming
@@ -508,25 +539,29 @@ void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer){
 unsigned int PicoScaledrv::receiveStreamBuffer(SA_SI_Handle handle, unsigned int timeout, bool &lastFrame){
     SA_SI_Event ev;
     unsigned int result = SA_SI_WaitForEvent(handle,&ev,timeout);
-    if (result != SA_SI_OK)
+    if(result != SA_SI_OK){
         //error
         cout<<"Error: "<<result<<"Check ERROR PV.";
         return result;
-    if (ev.type == SA_SI_STREAMBUFFER_READY_EVENT){
+    }
+    if(ev.type == SA_SI_STREAMBUFFER_READY_EVENT){
         // get buffer data
         result = SA_SI_AcquireBuffer(handle,ev.bufferId,&pBuffer);
-        if (result != SA_SI_OK)
+        if(result != SA_SI_OK){
             //error
             cout<<"Error: "<<result<<"Check ERROR PV.";
             return result;
+	}
         processBuffer(pBuffer);
-        if (pBuffer->info.flags & SA_SI_ST4REAM_END_FLAG)
+        if(pBuffer->info.flags & SA_SI_STREAM_END_FLAG){
             lastFrame = true;
+	}
         result = SA_SI_ReleaseBuffer(handle,ev.bufferId);
-        if (result != SA_SI_OK)
+        if(result != SA_SI_OK){
             //error
             cout<<"Error: "<<result<<"Check ERROR PV.";
             return result;
+	}
     }
     else{
         cout << "Received unexpected event type: " << ev.type << " (parameter: " << ev.devEventParameter << ")" << endl;
@@ -539,11 +574,10 @@ void PicoScaledrv::picoScale_open(const char *ip){
     if((ip!=NULL) && (ip[0]!='\0')){
 	const char *locator_part1 = "network:";
 	const char *locator_part2 = ":55555";
-        char *locator	= (char*) calloc(std::strlen(locator_part1) + std::strlen(ip) + std::
-        std::strlen(locator_part2) + 1, sizeof(char));
-	std::strcpy(locator, locator_part1);
-	std::strcat(locator, ip);
-	std::strcat(locator, locator_part2);
+        char *locator	= (char*) calloc(strlen(locator_part1) + strlen(ip) + strlen(locator_part2) +1, sizeof(char));
+	strcpy(locator, locator_part1);
+	strcat(locator, ip);
+	strcat(locator, locator_part2);
 
 	result = (SA_SI_Open(&handle, locator,""));
 	
@@ -652,12 +686,14 @@ void PicoScaledrv::picoScale_setFramerate(){
 //method for streaming a single user defined data source
 void PicoScaledrv::picoScale_stream(){ 
     lastFrame = false;
-    //int channelIndex, datasrcIndex, interleavingMode, bufferAggr, buffersNum; EXCLUSION TO BE CONFIRMED
+    int channelIndex, datasrcIndex, interleavingMode, bufferAggr, buffersNum;
 
     enabled_singledtsrc_stream.clear();
 
-    getIntegerParam(channelindx_mbboValue, &dataSource.address.channelIndex);
-    getIntegerParam(datasrcindx_mbboValue, &dataSource.address.dataSourceIndex);
+    getIntegerParam(channelindx_mbboValue, &channelIndex);
+    getIntegerParam(datasrcindx_mbboValue, &datasrcIndex);
+    dataSource.address.channelIndex = channelIndex;
+    dataSource.address.dataSourceIndex = datasrcIndex;
 
     result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, dataSource.address.channelIndex, dataSource.address.dataSourceIndex),&dataSource.dataType,0); 
     if (result != SA_SI_OK){
@@ -669,15 +705,13 @@ void PicoScaledrv::picoScale_stream(){
     streamConfig.frameSize = dataSource.dataSize;
     enabled_singledtsrc_stream.push_back(dataSource);
 
-    getIntegerParam(interleaving_binaryOutValue, &streamConfig.interleavingEnabled);
-    getIntegerParam(bufferaggr_mbboValue, &streamConfig.streamBufferAggregation);
-    getIntegerParam(buffersnum_longOutValue, &streamConfig.numberOfStreamBuffers);
-
-    /*  EXCLUSION TO BE CONFIRMED
-        streamConfig.interleavingEnabled = (bool) interleavingMode;
-        streamConfig.streamBufferAggregation = bufferAggr;
-        streamConfig.numberOfStreamBuffers = buffersNum;
-    */
+    getIntegerParam(interleaving_binaryOutValue, &interleavingMode);
+    getIntegerParam(bufferaggr_mbboValue, &bufferAggr);
+    getIntegerParam(buffersnum_longOutValue, &buffersNum);
+    
+    streamConfig.interleavingEnabled = interleavingMode;
+    streamConfig.streamBufferAggregation = bufferAggr;
+    streamConfig.numberOfStreamBuffers = buffersNum;
 
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,dataSource.address.channelIndex, dataSource.address.dataSourceIndex),SA_SI_ENABLED);
     if (result != SA_SI_OK){
@@ -874,6 +908,7 @@ void PicoScaledrv::picoScale_poll(){
 }
 
 void PicoScaledrv::picoScale_streamStop(){
+    cout<<"PARANDO\n";
     int streamModeActive;
     getIntegerParam(streamstart_mbboValue, &streamModeActive);
     

@@ -13,12 +13,12 @@ picoScale_registerRecordDeviceDriver pdbbase
 
 ## Load record instances
 #dbLoadTemplate "db/userHost.substitutions"
-dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=1, C=CATERETE:, P=PICOSCALE:")
-dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=2, C=CATERETE:, P=PICOSCALE:")
-dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=3, C=CATERETE:, P=PICOSCALE:")
-dbLoadRecords ("db/picoScale_Channel0.db", "C=CATERETE:, P=PICOSCALE:")
-dbLoadRecords ("db/picoScale_Commmunication.db", "ADDR=10.0.9.68, C=CATERETE:, P=PICOSCALE:")
-dbLoadRecords ("db/picoScale_Adjustment.db", "ADDR=10.0.9.68, C=CATERETE:, P=PICOSCALE:")
+dbLoadRecords ("$(ASYN)/db/asynRecord.db", "P=CATERETE:, R=asyn1, PORT=eth0, ADDR=0, OMAX=80, IMAX=80")
+dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=0, C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
+dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=1, C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
+dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=2, C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
+#dbLoadRecords ("db/picoScale_Channel0.db", "C=CATERETE:, P=PICOSCALE:, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
+dbLoadRecords ("db/picoScale_Commmunication.db", "C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
 
 ## Set this to see messages from mySub
 #var mySubDebug 1
@@ -26,8 +26,7 @@ dbLoadRecords ("db/picoScale_Adjustment.db", "ADDR=10.0.9.68, C=CATERETE:, P=PIC
 ## Run this to trace the stages of iocInit
 #traceIocInit
 
-PicoScaleCreateDriver("10.0.9.68")
-PicoScaleInitializingRoutinesRun()
+PicoScaleCreateDriver("eth0", "10.0.9.68")
 
 cd "${TOP}/iocBoot/${IOC}"
 iocInit

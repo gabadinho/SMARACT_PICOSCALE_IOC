@@ -7,8 +7,6 @@ include $(TOP)/configure/CONFIG
 DB += picoScale_Channel_Common.db
 DB += picoScale_Channel0.db
 DB += picoScale_Commmunication.db
-DB += picoScale_Adjustment.db
-//DB += picoScale_Experiment.db
 
 # If <anyname>.db template is not named <anyname>*.template add
 # <anyname>_TEMPLATE = <templatename>

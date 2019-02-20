@@ -119,13 +119,3 @@ record(bi, "$(C):$(P):STREAM_STATUS"){
     field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))STREAMSTATUS_BINARYIN_VAL")
     field(SCAN, "I/O Intr")
 }
-
-record(bo, "$(C):$(P):STREAM_STOP"){
-    field(DESC, "Stop current stream mode")
-    field(DTYP, "asynInt32")
-    field(VAL, "0")
-    field(ZNAM, "No interruption ongoing")
-    field(ONAM, "Stopping data streaming")
-    field(PINI, "YES")
-    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))STREAMSTOP_BINARYOUT_VAL")
-}

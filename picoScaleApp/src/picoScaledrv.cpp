@@ -31,8 +31,8 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	0, 0) /* Default priority and stack size */
 {
 	createParam(pos_ch0_waveformValueString, asynParamInt32, &pos_ch0_waveformValue);
-	createParam(vel_ch0_waveformValueString, asynParamFloat64, &vel_ch0_waveformValue);
-	createParam(acc_ch0_waveformValueString, asynParamFloat64, &acc_ch0_waveformValue);
+	createParam(vel_ch0_waveformValueString, asynParamInt32, &vel_ch0_waveformValue);
+	createParam(acc_ch0_waveformValueString, asynParamInt32, &acc_ch0_waveformValue);
 	createParam(swraw_ch0_analogInValueString, asynParamFloat64, &swraw_ch0_analogInValue);
 	createParam(s2wraw_ch0_analogInValueString, asynParamFloat64, &s2wraw_ch0_analogInValue);
 	createParam(swquality_ch0_analogInValueString, asynParamFloat64, &swquality_ch0_analogInValue);
@@ -76,7 +76,6 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(channelindx_mbboValueString, asynParamInt32, &channelindx_mbboValue);
 	createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);
 	createParam(streamstart_mbboValueString, asynParamInt32, &streamstart_mbboValue);
-        createParam(streamstop_binaryOutValueString, asynParamInt32, &streamstop_binaryOutValue);
         
 	picoScale_open(ip);
         PicoScaleInitializingRoutinesRun();
@@ -104,27 +103,22 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 		
             if(function==framerate_longOutValue){
                 picoScale_setFramerate();
-            }else if(function==streamstart_mbboValue){
+            }else if(function==streamstart_mbboValue && streamingActive==false){
                 if(value==0){
+			streamingActive = true;
                     setIntegerParam(streamStatus_binaryInValue, 1);
                     callParamCallbacks();
                     picoScale_stream();
                 }else if(value==1){
+			streamingActive = true;
                     setIntegerParam(streamStatus_binaryInValue, 1);
                     callParamCallbacks();
                     picoScale_streamPVA_allChannels();
                 }else if(value==2){
+			streamingActive = true;
                     setIntegerParam(streamStatus_binaryInValue, 1);
                     callParamCallbacks();
                     picoScale_streamPosition_allChannels();
-                }
-            }else if(function==streamstop_binaryOutValue){
-		cout<<"ESTAMOS AQUI";
-                int streamStatus;
-                getIntegerParam(streamStatus_binaryInValue, &streamStatus);
-		cout<<streamStatus;
-                if(streamStatus==1){
-                    picoScale_streamStop();
                 }
             }
                 
@@ -142,43 +136,18 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 	    return status;
 }
 
-asynStatus PicoScaledrv::readInt32(asynUser *pasynUser, epicsInt32 *value){
-    int function = pasynUser->reason;
-    int addr=0;
-    asynStatus status = asynSuccess;
-    epicsTimeStamp timeStamp; getTimeStamp(&timeStamp);
-    static const char *functionName = "readInt32";
-    
-    status = getAddress(pasynUser, &addr); if (status != asynSuccess) return(status);
-    /* We just read the current value of the parameter from the parameter library.
-     * Those values are updated whenever anything could cause them to change */
-    status = (asynStatus) getIntegerParam(addr, function, value);
-
-	
-    /* Set the timestamp */
-    pasynUser->timestamp = timeStamp;
-    if (status) 
-        epicsSnprintf(pasynUser->errorMessage, pasynUser->errorMessageSize, 
-                  "%s:%s: status=%d, function=%d, value=%d", 
-                  driverName, functionName, status, function, *value);
-    else        
-        asynPrint(pasynUser, ASYN_TRACEIO_DRIVER, 
-              "%s:%s: function=%d, value=%d\n", 
-              driverName, functionName, function, *value);
-    return(status);
-}
 // ----------------------------
 
 //Initializing routine for stream modes:
 // - PVA (Position/Velocity/Acceleration datasources) All channels;
-// - Position All channels.
+// - Position data sources All channels.
 void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
         dataSource.address.channelIndex = 0;
 	dataSource.address.dataSourceIndex = 0;
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 0),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -190,7 +159,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 1),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -201,7 +170,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 0, 2),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -212,7 +181,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 1, 0),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -224,7 +193,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 1, 1),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -235,7 +204,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 1, 2),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -246,7 +215,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 2, 0),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -258,7 +227,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 2, 1),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -269,7 +238,7 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, 2, 2),&dataSource.dataType,0); 
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<" Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
 	}
 	dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -350,13 +319,13 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
     /*  PicoScale's Channel/Data source indexes:
      *  Channel 0
      *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     long
+     *          0           Position    int64_t     long (int)
      *  Channel 1
      *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     long
+     *          0           Position    int64_t     long (int)
      *  Channel 2
      *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     long
+     *          0           Position    int64_t     long (int)
      */
     switch(streamConfig.enabledDataSources[dataSourceIndex].address.channelIndex){
             case 0:
@@ -364,36 +333,28 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                             case 0:
                                     v.i48value = *(const int64_t*)(pValue);
                                     aux_int64_t_prop = static_cast<int>(v.i48value);
-                                    cout<<aux_int64_t_prop<<"\n";
                                     setIntegerParam(pos_ch0_waveformValue, aux_int64_t_prop); 
-                                    callParamCallbacks();
-                                    //cout<<v.i48value<<"\n";
+				    callParamCallbacks();
                             break;
                     }
             break;
             case 1:
                     switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
                             case 0:
-
-                                    v.i48value = *(const int64_t*)(pValue);
+				    v.i48value = *(const int64_t*)(pValue);
                                     aux_int64_t_prop = static_cast<int>(v.i48value);
-                                    //cout<<aux_int64_t_prop<<"\n";
                                     setIntegerParam(pos_ch1_waveformValue, aux_int64_t_prop); 
-                                    callParamCallbacks();
-                                    //cout<<v.i48value<<"\n";
+				    callParamCallbacks();
                             break;
                     }
             break;
             case 2:
                     switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
                             case 0:
-
-                                    v.i48value = *(const int64_t*)(pValue);
+				    v.i48value = *(const int64_t*)(pValue);
                                     aux_int64_t_prop = static_cast<int>(v.i48value);
-                                    //cout<<aux_int64_t_prop<<"\n";
                                     setIntegerParam(pos_ch2_waveformValue, aux_int64_t_prop); 
-                                    callParamCallbacks();
-                                    //cout<<v.i48value<<"\n";
+				    callParamCallbacks();
                             break;
                     }
             break;
@@ -433,46 +394,40 @@ unsigned int PicoScaledrv::configureStream(SA_SI_Handle handle){
     getIntegerParam(interleaving_binaryOutValue, &streamConfig.interleavingEnabled);
     getIntegerParam(bufferaggr_mbboValue, &streamConfig.streamBufferAggregation);
     getIntegerParam(buffersnum_longOutValue, &streamConfig.numberOfStreamBuffers);
-    cout<<"CONFIG_STREAM"<<"\n";
-    cout<<"Frame aggregation: " <<streamConfig.frameAggregation<<"\n";
-    cout<<"Frame rate: "<<streamConfig.frameRate<<"\n";
-    cout<<"Interleaving: "<<streamConfig.interleavingEnabled<<"\n";
-    cout<<"Buffer Aggregation: "<<streamConfig.streamBufferAggregation<<"\n";
-    cout<<"Num Buffers: "<<streamConfig.numberOfStreamBuffers;
-    cout<<"\n";
+    
     // configure frame aggregation
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_AGGREGATION_PROP,0,0),streamConfig.frameAggregation);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return result;
     }
     // configure frame rate
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_FRAME_RATE_PROP,0,0),streamConfig.frameRate);
     if (result != SA_SI_OK){
 	 //error
-        cout<<"Error: "<<result<<"Check ERROR PV.";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return result;
     }
     // configure stream buffer aggregation
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMBUFFER_AGGREGATION_PROP,0,0),streamConfig.streamBufferAggregation);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return result;
     }
     // configure interleaving
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMBUFFERS_INTERLEAVED_PROP,0,0),streamConfig.interleavingEnabled);
     if (result != SA_SI_OK){
 	//error
-        cout<<"Error: "<<result<<"Check ERROR PV.";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return result;
     }
     // configure number of stream buffers
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_NUMBER_OF_STREAMBUFFERS_PROP,0,0),streamConfig.numberOfStreamBuffers);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return result;
     }
     return SA_SI_OK;
@@ -542,15 +497,16 @@ unsigned int PicoScaledrv::receiveStreamBuffer(SA_SI_Handle handle, unsigned int
     unsigned int result = SA_SI_WaitForEvent(handle,&ev,timeout);
     if(result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return result;
     }
     if(ev.type == SA_SI_STREAMBUFFER_READY_EVENT){
         // get buffer data
+	const SA_SI_DataBuffer *pBuffer;
         result = SA_SI_AcquireBuffer(handle,ev.bufferId,&pBuffer);
         if(result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<"Check ERROR PV.";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return result;
 	}
         processBuffer(pBuffer);
@@ -560,7 +516,7 @@ unsigned int PicoScaledrv::receiveStreamBuffer(SA_SI_Handle handle, unsigned int
         result = SA_SI_ReleaseBuffer(handle,ev.bufferId);
         if(result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<"Check ERROR PV.";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return result;
 	}
     }
@@ -584,7 +540,7 @@ void PicoScaledrv::picoScale_open(const char *ip){
 	
 	if (result != SA_SI_OK){
                 //error
-		cout<<"Could not connect to device. Error: "<<result<<". Check ERROR PV."<<"\n";
+		cout<<"Could not connect to device. Error: "<<result<<" -- Check ERROR PV.\n";
                 setIntegerParam(connectionStatus_binaryInValue, 0);
                 callParamCallbacks();
 		return;
@@ -613,7 +569,7 @@ void PicoScaledrv::picoScale_setFramerate(){
 	
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<"Check ERROR PV.";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
     	}
 	
@@ -622,7 +578,7 @@ void PicoScaledrv::picoScale_setFramerate(){
     	
 	if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<"Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
     	}
 
@@ -699,7 +655,7 @@ void PicoScaledrv::picoScale_stream(){
     result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, dataSource.address.channelIndex, dataSource.address.dataSourceIndex),&dataSource.dataType,0); 
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     dataSource.dataSize = getDataSize(dataSource.dataType);
@@ -717,119 +673,117 @@ void PicoScaledrv::picoScale_stream(){
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,dataSource.address.channelIndex, dataSource.address.dataSourceIndex),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = configureStream(handle);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     //stream begins!
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }	
 
     streamConfig.enabledDataSources = enabled_singledtsrc_stream;
 
-    //std::thread thread_object{
-	    while (!lastFrame){
-		    result = receiveStreamBuffer(handle, 2000, lastFrame);
-		    if (result != SA_SI_OK){
-		        //error
-		        cout<<"Error: "<<result<<"Check ERROR PV.\n";
-		        return;
-		    }
-	    }
-    //};
-    picoScale_streamStop();//this is run in case the user hasn't stopped the streaming by himself (EPICS record upper layer) and the streaming's last frame is detected
+    while(!lastFrame){
+	result = receiveStreamBuffer(handle, 2000, lastFrame);
+	if (result != SA_SI_OK){
+	        //error
+	        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
+	        return;
+	}
+    }
     return;
 }
 
-void PicoScaledrv::picoScale_streamPVA_allChannels(){//method for streaming position/velocity/acceleration measurements from all channels
+//method for streaming position/velocity/acceleration measurements from all channels
+void PicoScaledrv::picoScale_streamPVA_allChannels(){
     lastFrame = false;
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,1),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,2),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,0),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,1),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,2),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,0),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,1),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,2),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
 
     result = configureStream(handle);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     //stream begins!
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }	
 
@@ -840,165 +794,71 @@ void PicoScaledrv::picoScale_streamPVA_allChannels(){//method for streaming posi
         result = receiveStreamBuffer(handle, 2000, lastFrame);
         if (result != SA_SI_OK){
             //error
-            cout<<"Error: "<<result<<"Check ERROR PV.\n";
+            cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
             return;
         }
     }
-    picoScale_streamStop();//this is run in case the user hasn't stopped the streaming by himself (EPICS record upper layer) and the streaming's last frame is detected
     return;
 }
 
-void PicoScaledrv::picoScale_streamPosition_allChannels(){//method for streaming position measurements from all (3) channels	
+//method for streaming position measurements from all (3) channels
+void PicoScaledrv::picoScale_streamPosition_allChannels(){	
     lastFrame = false;
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,0,0),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,1,0),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ENABLED_PROP,2,0),SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
 
     result = configureStream(handle);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_MODE_PROP,0,0),SA_SI_DIRECT_STREAMING);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }
     //stream begins!
     result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_ENABLED);
     if (result != SA_SI_OK){
         //error
-        cout<<"Error: "<<result<<"Check ERROR PV.\n";
+        cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
         return;
     }	
 
     streamConfig.enabledDataSources = enabled_Positiondtsrcs_stream;
     streamConfig.frameSize = PositionAllChannels_frame_size;
 
-    while (!lastFrame)
-    {
+    while (!lastFrame){
             result = receiveStreamBuffer(handle, 2000, lastFrame);
             if (result != SA_SI_OK){
                 //error
-                cout<<"Error: "<<result<<"Check ERROR PV.\n";
+                cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
                 return;
             }
     }
-
-    picoScale_streamStop();//this is run in case the user hasn't stopped the streaming by himself (EPICS record upper layer) and the streaming's last frame is detected
     return;	
 }
 
 void PicoScaledrv::picoScale_poll(){
     return;
-}
-
-void PicoScaledrv::picoScale_streamStop(){
-    cout<<"PARANDO\n";
-    int streamModeActive;
-    getIntegerParam(streamstart_mbboValue, &streamModeActive);
-    
-    switch(streamModeActive){
-        case 0:
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, dataSource.address.channelIndex, dataSource.address.dataSourceIndex), SA_SI_DISABLED);
-        break;
-        case 1:
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 0), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 1), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0, 2), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 1, 0), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 1, 1), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 1, 2), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 2, 0), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 2, 1), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 2, 2), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }
-            break;
-        case 2:
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 0,0), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }            
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 1,0), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }            
-            result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_SI_STREAMING_ACTIVE_PROP, 2,0), SA_SI_DISABLED);
-            if (result != SA_SI_OK){
-                //error
-                cout<<"Error: "<<result<<"Check ERROR PV.";
-                return;
-            }            
-        break;
-    }
-    setIntegerParam(streamStatus_binaryInValue, 0);
-    setIntegerParam(streamstop_binaryOutValue, 0);
-    callParamCallbacks();
 }
 //---------------------------------------------------------------------------------------------------------
 
@@ -1006,6 +866,7 @@ void PicoScaledrv::picoScale_streamStop(){
 //--- Create driver function
 extern "C" int PicoScaleCreateDriver(const char *portName, const char *ip){
 	PicoScaledrv *picoScaledrv = new PicoScaledrv(portName, ip);
+	picoScaledrv = NULL;
 	return(asynSuccess);
 }
 

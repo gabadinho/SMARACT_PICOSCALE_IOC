@@ -1,53 +1,54 @@
-# PicoScale's datasources
+# PicoScale Channels' datasources
 
-record(waveform, "$(C):$(P):POS_$(Ch)"){
+record(longin, "$(C):$(P):POS_$(Ch)"){
 	field(DESC, "Position $(Ch)")
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(SCAN, "I/O Intr")
 	field(EGU, "nm")
-	field(NELM, "1000000")
-	field(FTVL, "LONG")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POS_CH$(Ch)_WAVEFORM_VAL")
 }
 
-record(waveform, "$(C):$(P):VEL_$(Ch)"){
+record(longin, "$(C):$(P):VEL_$(Ch)"){
 	field(DESC, "Velocity $(Ch)")
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(SCAN, "I/O Intr")
 	field(EGU, "m/s")
-	field(NELM, "1000000")
-	field(FTVL, "LONG")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))VEL_CH$(Ch)_WAVEFORM_VAL")
 }
 
-record(waveform, "$(C):$(P):ACC_$(Ch)"){
+record(longin, "$(C):$(P):ACC_$(Ch)"){
 	field(DESC, "Acceleration $(Ch)")
-	field(DTYP, "Soft Channel")
+	field(DTYP, "asynInt32")
+	field(SCAN, "I/O Intr")
 	field(EGU, "m/s^2")
-	field(NELM, "1000000")
-	field(FTVL, "LONG")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))ACC_CH$(Ch)_WAVEFORM_VAL")
 }
 
 record(ai, "$(C):$(P):SWRAW_$(Ch)"){
 	field(DESC, "Sine raw $(Ch)")
 	field(DTYP, "asynFloat64")
+	field(SCAN, "I/O Intr")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SWRAW_CH$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):S2WRAW_$(Ch)"){
 	field(DESC, "Cosine raw $(Ch)")
 	field(DTYP, "asynFloat64")
+	field(SCAN, "I/O Intr")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))S2WRAW_CH$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):SWQUALITY_$(Ch)"){
 	field(DESC, "Sine quality $(Ch)")
 	field(DTYP, "asynFloat64")
+	field(SCAN, "I/O Intr")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SWQUALITY_CH$(Ch)_ANALOGIN_VAL")
 }
 
 record(ai, "$(C):$(P):S2WQUALITY_$(Ch)"){
 	field(DESC, "Cosine quality $(Ch)")
 	field(DTYP, "asynFloat64")
+	field(SCAN, "I/O Intr")
 	field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))S2WQUALITY_CH$(Ch)_ANALOGIN_VAL")
 }
 

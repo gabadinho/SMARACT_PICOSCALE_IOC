@@ -78,7 +78,6 @@ class PicoScaledrv : public asynPortDriver {
 		
 		//AsynPortDriver methods extended
 		virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
-		virtual asynStatus readInt32(asynUser *pasynUser, epicsInt32 *value);
 
 		//SmarAct's library related
 		void picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex);
@@ -88,13 +87,11 @@ class PicoScaledrv : public asynPortDriver {
 		unsigned int receiveStreamBuffer(SA_SI_Handle handle, unsigned int timeout, bool &lastFrame);
 		void PicoScaleInitializingRoutinesRun();
 		void picoScale_open(const char *ip);
-		void picoScale_setFullAccess();
 		void picoScale_setFramerate();
 		void picoScale_stream();
 		void picoScale_streamPVA_allChannels();
 		void picoScale_streamPosition_allChannels();
 		void picoScale_poll();
-                void picoScale_streamStop();
 
 		// A union to store different types in one variable
 		union VariantValue
@@ -157,10 +154,9 @@ class PicoScaledrv : public asynPortDriver {
                 // -------------------------------
                 
 		//Globals
-		bool firstExe = true, lastFrame = false;
+		bool firstExe = true, lastFrame = false, streamingActive = false;
 		unsigned int result; //receives an hex code from every SmarAct function's return that represent success (SA_SI_OK or 0x00) or specific error code (!=SA_SI_OK)
-		SA_SI_Handle handle;	
-		const SA_SI_DataBuffer *pBuffer; //the buffer that will receive the streamed data
+		SA_SI_Handle handle;
 		vector<DataSource_t> enabled_singledtsrc_stream, enabled_PVAdtsrcs_stream, enabled_Positiondtsrcs_stream;
 		int32_t PVA_frame_size = 0, PositionAllChannels_frame_size = 0; //frame size based on the sum of the datasources' sizes
 
@@ -223,6 +219,5 @@ class PicoScaledrv : public asynPortDriver {
 		int channelindx_mbboValue;
 		int datasrcindx_mbboValue;
 		int streamstart_mbboValue;
-                int streamstop_binaryOutValue;
 		//--------------------------
 };

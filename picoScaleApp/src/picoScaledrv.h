@@ -1,45 +1,51 @@
 //-------------------------------- Input parameters --------------------------------
 //Channel 0 parameters
-#define pos_ch0_waveformValueString		"POS_CH0_WAVEFORM_VAL"
-#define vel_ch0_waveformValueString		"VEL_CH0_WAVEFORM_VAL"
-#define acc_ch0_waveformValueString		"ACC_CH0_WAVEFORM_VAL"
+#define pos_ch0_longInValueString		"POS_CH0_LONGIN_VAL"
+#define vel_ch0_longInValueString		"VEL_CH0_LONGIN_VAL"
+#define acc_ch0_longInValueString		"ACC_CH0_LONGIN_VAL"
 #define swraw_ch0_analogInValueString		"SWRAW_CH0_ANALOGIN_VAL"
 #define s2wraw_ch0_analogInValueString		"S2WRAW_CH0_ANALOGIN_VAL"
-#define swquality_ch0_analogInValueString	"SWQUALITY_CH0_ANALOGIN_VAL"
+#define sw_ch0_analogInValueString              "SW_CH0_ANALOGIN_VAL"
+#define s2w_ch0_analogInValueString             "S2W_CH0_ANALOGIN_VAL"
+#define swquality_ch0_analogInValueString       "SWQUALITY_CH0_ANALOGIN_VAL"
 #define s2wquality_ch0_analogInValueString	"S2WQUALITY_CH0_ANALOGIN_VAL"
-#define cntrZero_ch0_analogInValueString	"CNTRZERO_CH0_ANALOGIN_VAL"
-#define cntrOne_ch0_analogInValueString		"CNTRONE_CH0_ANALOGIN_VAL"
-#define envtemp_ch0_analogInValueString		"ENVTEMP_CH0_ANALOGIN_VAL"
-#define envHum_ch0_analogInValueString		"ENVHUM_CH0_ANALOGIN_VAL"
-#define envPress_ch0_analogInValueString	"ENVPRESS_CH0_ANALOGIN_VAL"
-/*#define gpioAdc0_ch0_analogInValueString	"GPIOADC0_CH0_ANALOGIN_VAL"
-#define gpioAdc1_ch0_analogInValueString	"GPIOADC1_CH0_ANALOGIN_VAL"
-#define gpioAdc2_ch0_analogInValueString	"GPIOADC2_CH0_ANALOGIN_VAL"
-#define calcSys0_ch0_analogInValueString	"CALCSYS0_CH0_ANALOGIN_VAL"
-#define calcSys1_ch0_analogInValueString	"CALCSYS1_CH0_ANALOGIN_VAL"
-#define calcSys2_ch0_analogInValueString	"CALCSYS2_CH0_ANALOGIN_VAL"
-#define calcSys3_ch0_analogInValueString	"CALCSYS3_CH0_ANALOGIN_VAL"
-#define calcSys4_ch0_analogInValueString	"CALCSYS4_CH0_ANALOGIN_VAL"
-#define calcSys5_ch0_analogInValueString	"CALCSYS5_CH0_ANALOGIN_VAL"
-#define calcSys6_ch0_analogInValueString	"CALCSYS6_CH0_ANALOGIN_VAL"
-#define calcSys7_ch0_analogInValueString	"CALCSYS7_CH0_ANALOGIN_VAL"*/
+//#define cntrZero_ch0_analogInValueString	"CNTRZERO_CH0_LONGIN_VAL"
+//#define cntrOne_ch0_analogInValueString	"CNTRONE_CH0_LONGIN_VAL"
+#define envtemp_ch0_longInValueString		"ENVTEMP_CH0_LONGIN_VAL"
+#define envHum_ch0_longInValueString		"ENVHUM_CH0_LONGIN_VAL"
+#define envPress_ch0_longInValueString          "ENVPRESS_CH0_LONGIN_VAL"
+/*#define gpioAdc0_ch0_longInValueString	"GPIOADC0_CH0_ANALOGIN_VAL"
+#define gpioAdc1_ch0_longInValueString          "GPIOADC1_CH0_ANALOGIN_VAL"
+#define gpioAdc2_ch0_longInValueString          "GPIOADC2_CH0_ANALOGIN_VAL"
+#define calcSys0_ch0_longInValueString          "CALCSYS0_CH0_ANALOGIN_VAL"
+#define calcSys1_ch0_longInValueString          "CALCSYS1_CH0_ANALOGIN_VAL"
+#define calcSys2_ch0_longInValueString          "CALCSYS2_CH0_ANALOGIN_VAL"
+#define calcSys3_ch0_longInValueString          "CALCSYS3_CH0_ANALOGIN_VAL"
+#define calcSys4_ch0_longInValueString          "CALCSYS4_CH0_ANALOGIN_VAL"
+#define calcSys5_ch0_longInValueString          "CALCSYS5_CH0_ANALOGIN_VAL"
+#define calcSys6_ch0_longInValueString          "CALCSYS6_CH0_ANALOGIN_VAL"
+#define calcSys7_ch0_longInValueString          "CALCSYS7_CH0_ANALOGIN_VAL"*/
 
 //Channel 1 parameters
-#define pos_ch1_waveformValueString		"POS_CH1_WAVEFORM_VAL"
-#define vel_ch1_waveformValueString		"VEL_CH1_WAVEFORM_VAL"
-#define acc_ch1_waveformValueString		"ACC_CH1_WAVEFORM_VAL"
+#define pos_ch1_longInValueString		"POS_CH1_LONGIN_VAL"
+#define vel_ch1_longInValueString		"VEL_CH1_LONGIN_VAL"
+#define acc_ch1_longInValueString		"ACC_CH1_LONGIN_VAL"
 #define swraw_ch1_analogInValueString		"SWRAW_CH1_ANALOGIN_VAL"
 #define s2wraw_ch1_analogInValueString		"S2WRAW_CH1_ANALOGIN_VAL"
-#define swquality_ch1_analogInValueString	"SWQUALITY_CH1_ANALOGIN_VAL"
+#define sw_ch1_analogInValueString              "SW_CH1_ANALOGIN_VAL"
+#define s2w_ch1_analogInValueString             "S2W_CH1_ANALOGIN_VAL"
+#define swquality_ch1_analogInValueString       "SWQUALITY_CH1_ANALOGIN_VAL"
 #define s2wquality_ch1_analogInValueString	"S2WQUALITY_CH1_ANALOGIN_VAL"
 
 //Channel 2 parameters 
-#define pos_ch2_waveformValueString		"POS_CH2_WAVEFORM_VAL"
-#define vel_ch2_waveformValueString		"VEL_CH2_WAVEFORM_VAL"
-#define acc_ch2_waveformValueString		"ACC_CH2_WAVEFORM_VAL"
+#define pos_ch2_longInValueString		"POS_CH2_LONGIN_VAL"
+#define vel_ch2_longInValueString		"VEL_CH2_LONGIN_VAL"
+#define acc_ch2_longInValueString		"ACC_CH2_LONGIN_VAL"
 #define swraw_ch2_analogInValueString		"SWRAW_CH2_ANALOGIN_VAL"
 #define s2wraw_ch2_analogInValueString		"S2WRAW_CH2_ANALOGIN_VAL"
-#define swquality_ch2_analogInValueString	"SWQUALITY_CH2_ANALOGIN_VAL"
+#define sw_ch2_analogInValueString              "SW_CH2_ANALOGIN_VAL"
+#define s2w_ch2_analogInValueString             "S2W_CH2_ANALOGIN_VAL"
+#define swquality_ch2_analogInValueString       "SWQUALITY_CH2_ANALOGIN_VAL"
 #define s2wquality_ch2_analogInValueString	"S2WQUALITY_CH2_ANALOGIN_VAL"
 
 //Communication parameters
@@ -57,6 +63,7 @@
 #define datasrcindx_mbboValueString		"DATASRCINDX_MBBO_VAL"
 #define streamstart_mbboValueString		"STREAMSTART_MBBO_VAL"
 #define streamstop_binaryOutValueString         "STREAMSTOP_BINARYOUT_VAL"
+#define poll_binaryOutValueString               "POLL_BINARYOUT_VAL"
 //------------------------------------------------------------------------------------
 
 
@@ -163,45 +170,51 @@ class PicoScaledrv : public asynPortDriver {
 	protected:
 		// --- Input parameters ---
 		//Channel 0 parameters
-		int pos_ch0_waveformValue;
-		int vel_ch0_waveformValue;
-		int acc_ch0_waveformValue;
+		int pos_ch0_longInValue;
+		int vel_ch0_longInValue;
+		int acc_ch0_longInValue;
 		int swraw_ch0_analogInValue;
 		int s2wraw_ch0_analogInValue;
+                int sw_ch0_analogInValue;
+                int s2w_ch0_analogInValue;
 		int swquality_ch0_analogInValue;
 		int s2wquality_ch0_analogInValue;
-		int cntrZero_ch0_analogInValue;
-		int cntrOne_ch0_analogInValue;
-		int envtemp_ch0_analogInValue;
-		int envHum_ch0_analogInValue;
-		int envPress_ch0_analogInValue;
-		/*int gpioAdc0_ch0_analogInValue;
-		int gpioAdc1_ch0_analogInValue;
-		int gpioAdc2_ch0_analogInValue;
-		int calcSys0_ch0_analogInValue;
-		int calcSys1_ch0_analogInValue;
-		int calcSys2_ch0_analogInValue;
-		int calcSys3_ch0_analogInValue;
-		int calcSys4_ch0_analogInValue;
-		int calcSys5_ch0_analogInValue;
-		int calcSys6_ch0_analogInValue;
-		int calcSys7_ch0_analogInValue;*/
+		//int cntrZero_ch0_longInValue;
+		//int cntrOne_ch0_longInValue;
+		int envtemp_ch0_longInValue;
+		int envHum_ch0_longInValue;
+		int envPress_ch0_longInValue;
+		/*int gpioAdc0_ch0_longInValue;
+		int gpioAdc1_ch0_longInValue;
+		int gpioAdc2_ch0_longInValue;
+		int calcSys0_ch0_longInValue;
+		int calcSys1_ch0_longInValue;
+		int calcSys2_ch0_longInValue;
+		int calcSys3_ch0_longInValue;
+		int calcSys4_ch0_longInValue;
+		int calcSys5_ch0_longInValue;
+		int calcSys6_ch0_longInValue;
+		int calcSys7_ch0_longInValue;*/
 
 		//Channel 1 parameters
-		int pos_ch1_waveformValue;
-		int vel_ch1_waveformValue;
-		int acc_ch1_waveformValue;
+		int pos_ch1_longInValue;
+		int vel_ch1_longInValue;
+		int acc_ch1_longInValue;
 		int swraw_ch1_analogInValue;
 		int s2wraw_ch1_analogInValue;
+                int sw_ch1_analogInValue;
+                int s2w_ch1_analogInValue;
 		int swquality_ch1_analogInValue;
 		int s2wquality_ch1_analogInValue;
 
 		//Channel 2 parameters 
-		int pos_ch2_waveformValue;
-		int vel_ch2_waveformValue;
-		int acc_ch2_waveformValue;
+		int pos_ch2_longInValue;
+		int vel_ch2_longInValue;
+		int acc_ch2_longInValue;
 		int swraw_ch2_analogInValue;
 		int s2wraw_ch2_analogInValue;
+                int sw_ch2_analogInValue;
+                int s2w_ch2_analogInValue;
 		int swquality_ch2_analogInValue;
 		int s2wquality_ch2_analogInValue;
 
@@ -219,5 +232,6 @@ class PicoScaledrv : public asynPortDriver {
 		int channelindx_mbboValue;
 		int datasrcindx_mbboValue;
 		int streamstart_mbboValue;
+                int poll_binaryOutValue;
 		//--------------------------
 };

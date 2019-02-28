@@ -17,7 +17,7 @@ dbLoadRecords ("$(ASYN)/db/asynRecord.db", "P=CATERETE:, R=asyn1, PORT=eth0, ADD
 dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=0, C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
 dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=1, C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
 dbLoadRecords ("db/picoScale_Channel_Common.db", "Ch=2, C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
-#dbLoadRecords ("db/picoScale_Channel0.db", "C=CATERETE:, P=PICOSCALE:, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
+dbLoadRecords ("db/picoScale_Channel0.db", "C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
 dbLoadRecords ("db/picoScale_Commmunication.db", "C=CATERETE, P=PICOSCALE, PORTNAME=eth0, ADDRESS=0, TIMEOUT=1")
 
 ## Set this to see messages from mySub

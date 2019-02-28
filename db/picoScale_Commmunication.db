@@ -1,0 +1,136 @@
+record(bi, "$(C):$(P):CONNECTION_STATUS"){
+    field(DESC, "Connected-Not Connected")
+    field(DTYP, "asynInt32")
+    field(VAL, "0")
+    field(ZNAM, "Not Connected")
+    field(ONAM, "Connected")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))CONNECTIONSTATUS_BINARYIN_VAL")
+    field(SCAN, "I/O Intr")
+}
+
+record(longout, "$(C):$(P):FRAMERATE"){
+    field(DESC, "PicoScale current operation framerate")
+    field(DTYP, "asynInt32")
+    field(VAL, "1")
+    field(EGU, "Hz")
+    field(HOPR, "10000000")
+    field(LOPR, "1")
+    field(PINI, "YES")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FRAMERATE_LONGOUT_VAL")
+}
+
+record(longout, "$(C):$(P):BUFFERS"){
+    field(DESC, "Number of stream buffers")
+    field(DTYP, "asynInt32")
+    field(VAL, "2")
+    field(PINI, "YES")
+    field(LOPR, "2")
+    field(HOPR, "256")
+    field(PINI, "YES")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))BUFFERSNUM_LONGOUT_VAL")
+}
+
+record(mbbo, "$(C):$(P):BUFFERAGGR"){
+    field(DESC, "Stream buffer aggregation")
+    field(DTYP, "asynInt32")
+    field(VAL,  "0")
+    field(ZRVL, "0")
+    field(ONVL, "32")
+    field(TWVL, "64")
+    field(THVL, "128")
+    field(FRVL, "256")
+    field(FVVL, "512")
+    field(SXVL, "1024")
+    field(ZRST, "0")
+    field(ONST, "32")
+    field(TWST, "64")
+    field(THST, "128")
+    field(FRST, "256")
+    field(FVST, "512")
+    field(SXST, "1024")
+    field(PINI, "YES")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))BUFFERAGGR_MBBO_VAL")
+}
+
+record(bo, "$(C):$(P):INTERLEAVING"){
+    field(DESC, "Interleaved mode")
+    field(DTYP, "asynInt32")
+    field(VAL, "1")
+    field(ZNAM, "Disabled")
+    field(ONAM, "Enabled")
+    field(PINI, "YES")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))INTERLEAVING_BINARYOUT_VAL")
+}
+
+record(mbbo, "$(C):$(P):CHANNELINDX"){
+    field(DESC, "Channel index")
+    field(DTYP, "asynInt32")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(ZRST, "Channel 0")
+    field(ONST, "Channel 1")
+    field(TWST, "Channel 2")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))CHANNELINDX_MBBO_VAL")
+}
+
+record(mbbo, "$(C):$(P):DATASRCINDX"){
+    field(DESC, "Data source index")
+    field(DTYP, "asynInt32")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(THVL, "3")
+    field(FRVL, "4")
+    field(FVVL, "5")
+    field(SXVL, "6")
+    field(SVVL, "7")
+    field(EIVL, "8")
+    field(ELVL, "11")
+    field(TVVL, "12")
+    field(TTVL, "13")
+    field(ZRST, "Position")
+    field(ONST, "Velocity")
+    field(TWST, "Acceleration")
+    field(THST, "Swraw")
+    field(FRST, "S2wraw")
+    field(FVST, "Sw")
+    field(SXST, "S2w")
+    field(SVST, "SwQuality")
+    field(EIST, "S2wQuality")
+    field(ELST, "Env Temp")
+    field(TVST, "Env Hum")
+    field(TTST, "Env Pres")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))DATASRCINDX_MBBO_VAL")
+}
+
+record(mbbo, "$(C):$(P):STREAM_START"){
+    field(DESC, "Init. selected stream mode")
+    field(DTYP, "asynInt32")
+    field(ZRVL, "0")
+    field(ONVL, "1")
+    field(TWVL, "2")
+    field(ZRST, "Stream")
+    field(ONST, "Stream PVA All Chanls.")
+    field(TWST, "Stream Pos. All Chanls.")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))STREAMSTART_MBBO_VAL")
+}
+
+record(bi, "$(C):$(P):STREAM_STATUS"){
+    field(DESC, "Stream Active-Inactive")
+    field(DTYP, "asynInt32")
+    field(VAL, "0")
+    field(ZNAM, "Stream inactive")
+    field(ONAM, "Stream active")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))STREAMSTATUS_BINARYIN_VAL")
+    field(SCAN, "I/O Intr")
+}
+
+record(bo, "$(C):$(P):POLL"){
+    field(DESC, "Poll a data source")
+    field(DTYP, "asynInt32")
+    field(VAL, "0")
+    field(ZNAM, "Poll inactive")
+    field(ONAM, "Poll active")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POLL_BINARYOUT_VAL")
+}

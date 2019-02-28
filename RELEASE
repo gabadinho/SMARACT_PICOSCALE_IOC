@@ -1,0 +1,20 @@
+CURRENT VERSION: 1.1
+
+Versions:
+1.0 - Streaming of position datasources.
+1.1  
+    - Full Access connection is the default method for connecting;
+    - Dead Path Correction (environmental module compensation) is activated by default for Position datasource of all channels;
+    - Streaming and polling of all datasources.
+*1.2
+    - Adjustment routines and visual alignment process;
+*1.3
+    - Triggering configuration
+--
+* Not implemented yet
+
+Tests
+Tested streaming with 2KHz fram rate.
+
+Version of SmarAct Software Bundle (libraries and docs):
+2.1.5

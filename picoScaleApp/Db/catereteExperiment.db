@@ -1,0 +1,7 @@
+record(longout, "$(C):$(P):EXPOSURE_TIME"){
+    field(DESC, "Exposure time")
+    field(DTYP, "asynInt32")
+    field(SCAN, "I/O Intr")
+    field(EGU, "ms")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))EXPOSURE_TIME_LONGOUT_VAL")
+}

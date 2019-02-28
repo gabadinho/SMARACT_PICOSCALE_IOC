@@ -1,85 +1,117 @@
 # PicoScale Channel 0 datasources
 
-record(ai, "$(C):$(P):ENV_TEMP"){
-	field(DESC, "Environt. Temp.")
-        field(DTYP, "asynFloat64")
-	field(SCAN, "I/O Intr")
+record(longin, "$(C):$(P):ENV_TEMP"){
+    field(DESC, "Environt. Temp.")
+    field(DTYP, "asynInt32")
+    field(EGU, "C°")
+    field(SCAN, "I/O Intr")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))ENVTEMP_CH0_LONGIN_VAL")
 }
 
-record(ai, "$(C):$(P):ENV_HUM"){
-	field(DESC, "Environt. Hum.")
-        field(DTYP, "asynFloat64")
-	field(SCAN, "I/O Intr")
+record(longin, "$(C):$(P):ENV_HUM"){
+    field(DESC, "Environt. Hum.")
+    field(DTYP, "asynInt32")
+    field(SCAN, "I/O Intr")
+    field(EGU, "%")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))ENVHUM_CH0_LONGIN_VAL")
 }
 
-record(ai, "$(C):$(P):ENV_PRESS"){
-	field(DESC, "Environt. Press.")
-        field(DTYP, "asynFloat64")
-	field(SCAN, "I/O Intr")
+record(longin, "$(C):$(P):ENV_PRESS"){
+    field(DESC, "Environt. Press.")
+    field(DTYP, "asynInt32")
+    field(EGU, "Pascal")
+    field(SCAN, "I/O Intr")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))ENVPRESS_CH0_LONGIN_VAL")
 }
 
 #record(ai, "$(C):$(P):CNTR_ZERO"){
-#	field(DESC, "Counter Zero")
-#        field(DTYP, "asynFloat64")
+#   field(DESC, "Counter Zero")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CNTR_ONE"){#
-#	field(DESC, "Counter 1")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Counter 1")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):GPIO_ADC_0"){
-#	field(DESC, "GPIO ADC 0")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "GPIO ADC 0")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):GPIO_ADC_1"){
-#	field(DESC, "GPIO ADC 1")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "GPIO ADC 1")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):GPIO_ADC_2"){
-#	field(DESC, "GPIO ADC 2")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "GPIO ADC 2")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_0"){
-#	field(DESC, "Calc. Sys. 0")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 0")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_1"){
-#	field(DESC, "Calc. Sys. 1")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 1")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_2"){
-#	field(DESC, "Calc. Sys. 2")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 2")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_3"){
-#	field(DESC, "Calc. Sys. 3")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 3")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_4"){
-#	field(DESC, "Calc. Sys. 4")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 4")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_5"){
-#	field(DESC, "Calc. Sys. 5")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 5")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_6"){
-#	field(DESC, "Calc. Sys. 6")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 6")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 
 #record(ai, "$(C):$(P):CALC_SYS_7"){
-#	field(DESC, "Calc. Sys. 7")
-#       field(DTYP, "asynFloat64")
+#   field(DESC, "Calc. Sys. 7")
+#   field(DTYP, "asynFloat64")
+#   field(SCAN, "I/O Intr")
+#   field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))")
 #}
 

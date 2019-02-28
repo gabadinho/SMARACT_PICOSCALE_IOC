@@ -1,3 +1,28 @@
+/*____________________________________________________________________________________________________________________________________
+|	Driver support for SmarAct PicoScale interferometer developed with AsynPortDriver module from asyn/SynApps                    |
+|	Brazilian Synchroton Light National Laboratory - Campinas, 02/28/2019                                                         |
+|	Author: Allan S. B. Bugyi	(allan.bugyi@lnls.br)									      |
+|	Version: 1.1														      |
+|	Tested                                                                                                                        |
+|                                                                                                                                     |
+|       License:                                                                                                                      |
+|        This software is distributed under the following ISC license:                                                                |
+|                                                                                                                                     |
+|        Copyright © 2018 BRAZILIAN SYNCHROTRON LIGHT SOURCE <sol@lnls.br>                                                            |
+|                                                                                                                                     |
+|        Permission to use, copy, modify, and/or distribute this software for any                                                     |
+|        purpose with or without fee is hereby granted, provided that the above                                                       |
+|        copyright notice and this permission notice appear in all copies.                                                            |
+|                                                                                                                                     |
+|        THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES                                                     |
+|        WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF                                                             |
+|        MERCHANTABILITY AND FITNESS.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR                                                     |
+|        ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES                                                       |
+|        WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION                                                 |
+|        OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN                                                       |
+|        CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.                                                                     |
+|_____________________________________________________________________________________________________________________________________|*/
+
 #include<cstdlib>
 #include <iostream>
 #include <string.h>
@@ -30,41 +55,47 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1, /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
 	0, 0) /* Default priority and stack size */
 {
-	createParam(pos_ch0_waveformValueString, asynParamInt32, &pos_ch0_waveformValue);
-	createParam(vel_ch0_waveformValueString, asynParamInt32, &vel_ch0_waveformValue);
-	createParam(acc_ch0_waveformValueString, asynParamInt32, &acc_ch0_waveformValue);
+	createParam(pos_ch0_longInValueString, asynParamInt32, &pos_ch0_longInValue);
+	createParam(vel_ch0_longInValueString, asynParamInt32, &vel_ch0_longInValue);
+	createParam(acc_ch0_longInValueString, asynParamInt32, &acc_ch0_longInValue);
 	createParam(swraw_ch0_analogInValueString, asynParamFloat64, &swraw_ch0_analogInValue);
 	createParam(s2wraw_ch0_analogInValueString, asynParamFloat64, &s2wraw_ch0_analogInValue);
+        createParam(sw_ch0_analogInValueString, asynParamFloat64, &sw_ch0_analogInValue);
+        createParam(s2w_ch0_analogInValueString, asynParamFloat64, &s2w_ch0_analogInValue);
 	createParam(swquality_ch0_analogInValueString, asynParamFloat64, &swquality_ch0_analogInValue);
 	createParam(s2wquality_ch0_analogInValueString, asynParamFloat64, &s2wquality_ch0_analogInValue);
-	createParam(cntrZero_ch0_analogInValueString, asynParamFloat64, &cntrZero_ch0_analogInValue);
-	createParam(cntrOne_ch0_analogInValueString, asynParamFloat64, &cntrOne_ch0_analogInValue);
-	createParam(envtemp_ch0_analogInValueString, asynParamFloat64, &envtemp_ch0_analogInValue);
-	createParam(envHum_ch0_analogInValueString, asynParamFloat64, &envHum_ch0_analogInValue);
-	createParam(envPress_ch0_analogInValueString, asynParamFloat64, &envPress_ch0_analogInValue);
-	/*createParam(gpioAdc0_ch0_analogInValueString, asynParamFloat64, &gpioAdc0_ch0_analogInValue);
-	createParam(gpioAdc1_ch0_analogInValueString, asynParamFloat64, &gpioAdc1_ch0_analogInValue);
-	createParam(gpioAdc2_ch0_analogInValueString, asynParamFloat64, &gpioAdc2_ch0_analogInValue);
-	createParam(calcSys0_ch0_analogInValueString, asynParamFloat64, &calcSys0_ch0_analogInValue);
-	createParam(calcSys1_ch0_analogInValueString, asynParamFloat64, &calcSys1_ch0_analogInValue);
-	createParam(calcSys2_ch0_analogInValueString, asynParamFloat64, &calcSys2_ch0_analogInValue);
-	createParam(calcSys3_ch0_analogInValueString, asynParamFloat64, &calcSys3_ch0_analogInValue);
-	createParam(calcSys4_ch0_analogInValueString, asynParamFloat64, &calcSys4_ch0_analogInValue);
-	createParam(calcSys5_ch0_analogInValueString, asynParamFloat64, &calcSys5_ch0_analogInValue);
-	createParam(calcSys6_ch0_analogInValueString, asynParamFloat64, &calcSys6_ch0_analogInValue);
-	createParam(calcSys7_ch0_analogInValueString, asynParamFloat64, &calcSys7_ch0_analogInValue);*/
-	createParam(pos_ch1_waveformValueString, asynParamInt32, &pos_ch1_waveformValue);
-	createParam(vel_ch1_waveformValueString, asynParamFloat64, &vel_ch1_waveformValue);
-	createParam(acc_ch1_waveformValueString, asynParamFloat64, &acc_ch1_waveformValue);
+	//createParam(cntrZero_ch0_longInValueString, asynParamInt32, &cntrZero_ch0_longInValue);
+	//createParam(cntrOne_ch0_longInValueString, asynParamInt32, &cntrOne_ch0_longInValue);
+	createParam(envtemp_ch0_longInValueString, asynParamInt32, &envtemp_ch0_longInValue);
+	createParam(envHum_ch0_longInValueString, asynParamInt32, &envHum_ch0_longInValue);
+	createParam(envPress_ch0_longInValueString, asynParamInt32, &envPress_ch0_longInValue);
+	/*createParam(gpioAdc0_ch0_longInValueString, asynParamInt32, &gpioAdc0_ch0_longInValue);
+	createParam(gpioAdc1_ch0_longInValueString, asynParamInt32, &gpioAdc1_ch0_longInValue);
+	createParam(gpioAdc2_ch0_longInValueString, asynParamInt32, &gpioAdc2_ch0_longInValue);
+	createParam(calcSys0_ch0_longInValueString, asynParamInt32, &calcSys0_ch0_longInValue);
+	createParam(calcSys1_ch0_longInValueString, asynParamInt32, &calcSys1_ch0_longInValue);
+	createParam(calcSys2_ch0_longInValueString, asynParamInt32, &calcSys2_ch0_longInValue);
+	createParam(calcSys3_ch0_longInValueString, asynParamInt32, &calcSys3_ch0_longInValue);
+	createParam(calcSys4_ch0_longInValueString, asynParamInt32, &calcSys4_ch0_longInValue);
+	createParam(calcSys5_ch0_longInValueString, asynParamInt32, &calcSys5_ch0_longInValue);
+	createParam(calcSys6_ch0_longInValueString, asynParamInt32, &calcSys6_ch0_longInValue);
+	createParam(calcSys7_ch0_longInValueString, asynParamInt32, &calcSys7_ch0_longInValue);*/
+	createParam(pos_ch1_longInValueString, asynParamInt32, &pos_ch1_longInValue);
+	createParam(vel_ch1_longInValueString, asynParamInt32, &vel_ch1_longInValue);
+	createParam(acc_ch1_longInValueString, asynParamInt32, &acc_ch1_longInValue);
 	createParam(swraw_ch1_analogInValueString, asynParamFloat64, &swraw_ch1_analogInValue);
 	createParam(s2wraw_ch1_analogInValueString, asynParamFloat64, &s2wraw_ch1_analogInValue);
+        createParam(sw_ch1_analogInValueString, asynParamFloat64, &sw_ch1_analogInValue);
+        createParam(s2w_ch1_analogInValueString, asynParamFloat64, &s2w_ch1_analogInValue);        
 	createParam(swquality_ch1_analogInValueString, asynParamFloat64, &swquality_ch1_analogInValue);
 	createParam(s2wquality_ch1_analogInValueString, asynParamFloat64, &s2wquality_ch1_analogInValue);
-	createParam(pos_ch2_waveformValueString, asynParamInt32, &pos_ch2_waveformValue);
-	createParam(vel_ch2_waveformValueString, asynParamFloat64, &vel_ch2_waveformValue);
-	createParam(acc_ch2_waveformValueString, asynParamFloat64, &acc_ch2_waveformValue);
+	createParam(pos_ch2_longInValueString, asynParamInt32, &pos_ch2_longInValue);
+	createParam(vel_ch2_longInValueString, asynParamInt32, &vel_ch2_longInValue);
+	createParam(acc_ch2_longInValueString, asynParamInt32, &acc_ch2_longInValue);
 	createParam(swraw_ch2_analogInValueString, asynParamFloat64, &swraw_ch2_analogInValue);
 	createParam(s2wraw_ch2_analogInValueString, asynParamFloat64, &s2wraw_ch2_analogInValue);
+        createParam(sw_ch2_analogInValueString, asynParamFloat64, &sw_ch2_analogInValue);
+        createParam(s2w_ch2_analogInValueString, asynParamFloat64, &s2w_ch2_analogInValue);
 	createParam(swquality_ch2_analogInValueString, asynParamFloat64, &swquality_ch2_analogInValue);
 	createParam(s2wquality_ch2_analogInValueString, asynParamFloat64, &s2wquality_ch2_analogInValue);
 	createParam(connectionStatus_binaryInValueString, asynParamInt32, &connectionStatus_binaryInValue); 
@@ -76,6 +107,7 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(channelindx_mbboValueString, asynParamInt32, &channelindx_mbboValue);
 	createParam(datasrcindx_mbboValueString, asynParamInt32, &datasrcindx_mbboValue);
 	createParam(streamstart_mbboValueString, asynParamInt32, &streamstart_mbboValue);
+        createParam(poll_binaryOutValueString, asynParamInt32, &poll_binaryOutValue);
         
 	picoScale_open(ip);
         PicoScaleInitializingRoutinesRun();
@@ -105,20 +137,32 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
                 picoScale_setFramerate();
             }else if(function==streamstart_mbboValue && streamingActive==false){
                 if(value==0){
-			streamingActive = true;
+                    streamingActive = true;
                     setIntegerParam(streamStatus_binaryInValue, 1);
                     callParamCallbacks();
                     picoScale_stream();
+                    setIntegerParam(streamStatus_binaryInValue, 0);
+                    callParamCallbacks();                    
                 }else if(value==1){
-			streamingActive = true;
+                    streamingActive = true;
                     setIntegerParam(streamStatus_binaryInValue, 1);
                     callParamCallbacks();
                     picoScale_streamPVA_allChannels();
+                    setIntegerParam(streamStatus_binaryInValue, 0);
+                    callParamCallbacks();                    
                 }else if(value==2){
-			streamingActive = true;
+                    streamingActive = true;
                     setIntegerParam(streamStatus_binaryInValue, 1);
                     callParamCallbacks();
                     picoScale_streamPosition_allChannels();
+                    setIntegerParam(streamStatus_binaryInValue, 0);
+                    callParamCallbacks();
+                }
+            }else if(function==poll_binaryOutValue){
+                if(value==1){
+                    picoScale_poll();
+                    setIntegerParam(poll_binaryOutValue, 0);
+                    callParamCallbacks();
                 }
             }
                 
@@ -137,6 +181,45 @@ asynStatus PicoScaledrv::writeInt32(asynUser *pasynUser, epicsInt32 value){
 }
 
 // ----------------------------
+
+/*  PicoScale to EPICS data types conversion
+     *  Channel 0 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     *      Datasource      Desc.       Data type   EPICS casting to
+     *          0           Position    int64_t     long (int)
+     *          1           Velocity    int64_t     long (int)
+     *          2           Accelerat   int64_t     long (int)
+     *          3           SwRaw       double      analog (double)
+     *          4           S2wRaw      double      analog (double)
+     *          5           Sw          double      analog (double)
+     *          6           S2w         double      analog (double)
+     *          7           SwQuality   double      analog (double)
+     *          8           S2wQuality  double      analog (double)
+     *          11          Env Temp    int64_t     long (int)
+     *          12          Env Hum     int64_t     long (int)
+     *          13          Env Pres    int64_t     long (int)
+     *  Channel 1 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     *      Datasource      Desc.       Data type   EPICS casting to
+     *          0           Position    int64_t     long (int)
+     *          1           Velocity    int64_t     long (int)
+     *          2           Accelerat   int64_t     long (int)
+     *          3           SwRaw       double      analog (double)
+     *          4           S2wRaw      double      analog (double)
+     *          5           Sw          double      analog (double)
+     *          6           S2w         double      analog (double)
+     *          7           SwQuality   double      analog (double)
+     *          8           S2wQuality  double      analog (double)
+     *  Channel 2 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     *      Datasource      Desc.       Data type   EPICS casting to
+     *          0           Position    int64_t     long (int)
+     *          1           Velocity    int64_t     long (int)
+     *          2           Accelerat   int64_t     long (int)
+     *          3           SwRaw       double      analog (double)
+     *          4           S2wRaw      double      analog (double)
+     *          5           Sw          double      analog (double)
+     *          6           S2w         double      analog (double)
+     *          7           SwQuality   double      analog (double)
+     *          8           S2wQuality  double      analog (double)     
+*/
 
 //Initializing routine for stream modes:
 // - PVA (Position/Velocity/Acceleration datasources) All channels;
@@ -255,112 +338,6 @@ void PicoScaledrv::PicoScaleInitializingRoutinesRun(){
 	return;
 }
 
-//Record updating
-void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex){
-    int aux_int64_t_prop; //we have to cast the int64_t datatype from PicoScale to EPICS type long 
-    VariantValue v;
-/*
-    switch (dataSource.dataType)
-    {
-        case SA_SI_INT8_DTYPE:
-            v.i8value = *(const int8_t*)(pValue);
-		cout<<v.i8value<<"\n";
-            break;
-        case SA_SI_UINT8_DTYPE:
-            v.u8value = *(const uint8_t*)(pValue);
-		cout<<v.u8value<<"\n";
-            break;
-        case SA_SI_INT16_DTYPE:
-            v.i16value = *(const int16_t*)(pValue);
-		cout<<v.i16value<<"\n";
-            break;
-        case SA_SI_UINT16_DTYPE:
-            v.u16value = *(const uint16_t*)(pValue);
-		cout<<v.u16value<<"\n";
-            break;
-        case SA_SI_INT32_DTYPE:
-            v.i32value = *(const int32_t*)(pValue);
-		cout<<v.i32value<<"\n";
-            break;
-        case SA_SI_UINT32_DTYPE:
-            v.u32value = *(const uint32_t*)(pValue);
-		cout<<v.u32value<<"\n";
-            break;
-        case SA_SI_INT48_DTYPE:
-            v.i48value = *(const int64_t*)(pValue);
-		cout<<"Como eu esperava: "<<v.i48value<<"\n";
-            break;
-        case SA_SI_UINT48_DTYPE:
-            v.u48value = *(const uint64_t*)(pValue);
-		cout<<v.u48value<<"\n";
-            break;
-        case SA_SI_INT64_DTYPE:
-            v.i64value = *(const int64_t*)(pValue);
-		cout<<"Como eu esperava: "<<v.i64value<<"\n";
-            break;
-        case SA_SI_UINT64_DTYPE:
-            v.u64value = *(const uint64_t*)(pValue);
-		cout<<"Como eu esperava: "<<v.u64value<<"\n";
-            break;
-        case SA_SI_FLOAT32_DTYPE:
-            v.f32value = *(const float*)(pValue);
-		cout<<v.f32value<<"\n";
-            break;
-        case SA_SI_FLOAT64_DTYPE:
-            v.f64value = *(const double*)(pValue);
-		cout<<v.f64value<<"\n";
-            break;
-        default:
-            // shouldn't happen
-            v.i32value = 0;
-            break;
-    }
-*/
-    /*  PicoScale's Channel/Data source indexes:
-     *  Channel 0
-     *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     long (int)
-     *  Channel 1
-     *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     long (int)
-     *  Channel 2
-     *      Datasource      Desc.       Data type   EPICS casting to
-     *          0           Position    int64_t     long (int)
-     */
-    switch(streamConfig.enabledDataSources[dataSourceIndex].address.channelIndex){
-            case 0:
-                    switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
-                            case 0:
-                                    v.i48value = *(const int64_t*)(pValue);
-                                    aux_int64_t_prop = static_cast<int>(v.i48value);
-                                    setIntegerParam(pos_ch0_waveformValue, aux_int64_t_prop); 
-				    callParamCallbacks();
-                            break;
-                    }
-            break;
-            case 1:
-                    switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
-                            case 0:
-				    v.i48value = *(const int64_t*)(pValue);
-                                    aux_int64_t_prop = static_cast<int>(v.i48value);
-                                    setIntegerParam(pos_ch1_waveformValue, aux_int64_t_prop); 
-				    callParamCallbacks();
-                            break;
-                    }
-            break;
-            case 2:
-                    switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
-                            case 0:
-				    v.i48value = *(const int64_t*)(pValue);
-                                    aux_int64_t_prop = static_cast<int>(v.i48value);
-                                    setIntegerParam(pos_ch2_waveformValue, aux_int64_t_prop); 
-				    callParamCallbacks();
-                            break;
-                    }
-            break;
-    }
-}
-
 int32_t PicoScaledrv::getDataSize(int32_t dataType)
 {
     switch (dataType)
@@ -433,6 +410,218 @@ unsigned int PicoScaledrv::configureStream(SA_SI_Handle handle){
     return SA_SI_OK;
 }
 
+//Registering the data source(s) streamed values on records
+void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex){
+    int aux_int64_t_prop;
+    float aux_float64_t_prop;
+    VariantValue v;
+    
+    switch(streamConfig.enabledDataSources[dataSourceIndex].address.channelIndex){
+        case 0:
+            switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
+                case 0:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i48value);
+                    setIntegerParam(pos_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();
+                break;
+                case 1:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(vel_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 2:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(acc_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                 
+                break;
+                case 3:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swraw_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 4:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wraw_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 5:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(sw_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 6:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2w_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 7:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swquality_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 8:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wquality_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                /*case 9:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(); 
+                    callParamCallbacks(); 
+                break;
+                case 10:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(); 
+                    callParamCallbacks(); 
+                break;*/
+                case 11:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(envtemp_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 12:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(envHum_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                            
+                break;
+                case 13:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(envPress_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                            
+                break;                
+            }
+        break;
+        case 1:
+            switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
+                case 0:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i48value);
+                    setIntegerParam(pos_ch1_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();
+                break;
+                case 1:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(vel_ch1_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 2:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(acc_ch1_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 3:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swraw_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 4:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wraw_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 5:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(sw_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 6:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2w_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 7:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swquality_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 8:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wquality_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;                
+            }
+        break;
+        case 2:
+            switch(streamConfig.enabledDataSources[dataSourceIndex].address.dataSourceIndex){
+                case 0:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i48value);
+                    setIntegerParam(pos_ch2_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();
+                break;
+                case 1:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(vel_ch2_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 2:
+                    v.i64value = *(const int64_t*)(pValue);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(acc_ch2_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 3:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swraw_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 4:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wraw_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 5:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(sw_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 6:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2w_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 7:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swquality_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 8:
+                    v.f64value = *(const double*)(pValue);
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wquality_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;                
+            }
+        break;
+    }
+}
+
 void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer){
     // Each buffer holds as many frames as we have defined by the stream
     // buffer aggregation.
@@ -459,7 +648,7 @@ void PicoScaledrv::processBuffer(const SA_SI_DataBuffer *buffer){
             }
         }
     }
-    else{ // non-interleaving/*
+    else{ // non-interleaving - Not used so far/*
         // The non-interleaved buffer structure is:
         //                    0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
         //                  +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---
@@ -538,16 +727,44 @@ void PicoScaledrv::picoScale_open(const char *ip){
 
 	result = (SA_SI_Open(&handle, locator,""));
 	
-	if (result != SA_SI_OK){
+	if(result != SA_SI_OK){
                 //error
 		cout<<"Could not connect to device. Error: "<<result<<" -- Check ERROR PV.\n";
                 setIntegerParam(connectionStatus_binaryInValue, 0);
                 callParamCallbacks();
 		return;
     	}
-        
         setIntegerParam(connectionStatus_binaryInValue, 1);
         callParamCallbacks();
+        
+        result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_SYS_FULL_ACCESS_CONNECTION_PROP,0,0), SA_SI_ENABLED);
+        
+        if(result != SA_SI_OK){
+            //error
+            cout<<"Could not set Full Access Connection. Error: "<<result<<" -- Check ERROR PV.\n";
+    	}
+        
+        //Activating Dead Path Correction for all the 3 channels, so the measurements account for the environmental module input
+        result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_CH_DEAD_PATH_CORRECTION_ENABLED_PROP,0,0), SA_SI_ENABLED);
+        
+        if(result != SA_SI_OK){
+            //error
+            cout<<"Dead path correction for channel 0 not activated. Error: "<<result<<" -- Check ERROR PV.\n";
+        }
+        
+        result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_CH_DEAD_PATH_CORRECTION_ENABLED_PROP,1,0), SA_SI_ENABLED);
+        
+        if(result != SA_SI_OK){
+            //error
+            cout<<"Dead path correction for channel 1 not activated. Error: "<<result<<" -- Check ERROR PV.\n";
+        }
+        
+        result = SA_SI_SetProperty_i32(handle, SA_SI_EPK(SA_PS_CH_DEAD_PATH_CORRECTION_ENABLED_PROP,2,0), SA_SI_ENABLED);
+        
+        if(result != SA_SI_OK){
+            //error
+            cout<<"Dead path correction for channel 2 not activated. Error: "<<result<<" -- Check ERROR PV.\n";
+        }
     }else{
         //error
         cout<<"Error: Invalid IP!"<<"\n";
@@ -858,6 +1075,221 @@ void PicoScaledrv::picoScale_streamPosition_allChannels(){
 }
 
 void PicoScaledrv::picoScale_poll(){
+    int channelIndex, datasrcIndex, aux_int64_t_prop;
+    float aux_float64_t_prop;
+    int32_t dataType;
+    VariantValue v;
+    getIntegerParam(channelindx_mbboValue, &channelIndex);
+    getIntegerParam(datasrcindx_mbboValue, &datasrcIndex);
+    
+    result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, channelIndex, datasrcIndex),&dataType,0); 
+    
+    if (result != SA_SI_OK){
+                //error
+                cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
+                return;
+    }
+    
+    switch(dataType){
+        case SA_SI_INT32_DTYPE:
+        case SA_SI_UINT32_DTYPE:
+        case SA_SI_INT48_DTYPE:
+        case SA_SI_UINT48_DTYPE:
+        case SA_SI_INT64_DTYPE:
+        case SA_SI_UINT64_DTYPE:
+                result = SA_SI_GetValue_i64(handle,channelIndex,datasrcIndex,&v.i64value);
+                if (result != SA_SI_OK){
+                    //error
+                    cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
+                    return;
+                }
+            break;
+        case SA_SI_FLOAT32_DTYPE:
+        case SA_SI_FLOAT64_DTYPE:
+                result = SA_SI_GetValue_f64(handle,channelIndex,datasrcIndex,&v.f64value);
+                if (result != SA_SI_OK){
+                    //error
+                    cout<<"Error: "<<result<<" -- Check ERROR PV.\n";
+                    return;
+                }
+        break;
+    }
+    
+    switch(channelIndex){
+        case 0:
+            switch(datasrcIndex){
+                case 0:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(pos_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();
+                break;
+                case 1:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(vel_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 2:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(acc_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                 
+                break;
+                case 3:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swraw_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 4:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wraw_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 5:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(sw_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 6:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2w_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 7:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swquality_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 8:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wquality_ch0_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                /*case 9:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(); 
+                    callParamCallbacks(); 
+                break;
+                case 10:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(); 
+                    callParamCallbacks(); 
+                break;*/
+                case 11:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(envtemp_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 12:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(envHum_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                            
+                break;
+                case 13:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setIntegerParam(envPress_ch0_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                            
+                break;
+            }
+        break;
+        case 1:
+            switch(datasrcIndex){
+                case 0:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(pos_ch1_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();
+                break;
+                case 1:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(vel_ch1_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 2:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(acc_ch1_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 3:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swraw_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 4:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wraw_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 5:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(sw_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 6:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2w_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 7:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swquality_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 8:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wquality_ch1_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+            }
+        break;
+        case 2:
+            switch(datasrcIndex){
+                case 0:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(pos_ch2_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();
+                break;
+                case 1:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(vel_ch2_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 2:
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
+                    setIntegerParam(acc_ch2_longInValue, aux_int64_t_prop); 
+                    callParamCallbacks();                    
+                break;
+                case 3:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swraw_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 4:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wraw_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 5:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(sw_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 6:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2w_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 7:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(swquality_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+                case 8:
+                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    setDoubleParam(s2wquality_ch2_analogInValue, aux_int64_t_prop); 
+                    callParamCallbacks(); 
+                break;
+            }
+        break;
+    }
+    
     return;
 }
 //---------------------------------------------------------------------------------------------------------

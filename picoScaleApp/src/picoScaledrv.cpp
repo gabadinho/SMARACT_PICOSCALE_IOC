@@ -49,7 +49,7 @@ static const char *driverName = "PicoScaledriver";
 
 //------------------------------------------ AsynPortDriver ------------------------------------------
 PicoScaledrv::PicoScaledrv(const char *portName, const char *ip) 
-	: asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
+	: asynPortDriver(portName, MAX_SIGNALS, /*NUM_PARAMS,*/
 	asynInt32Mask | asynFloat64Mask | asynDrvUserMask,// Interfaces that we implement
 	asynInt32Mask | asynFloat64Mask,// Interfaces that do callbacks
 	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1, /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */

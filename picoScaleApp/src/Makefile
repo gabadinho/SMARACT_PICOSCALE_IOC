@@ -7,6 +7,7 @@ include $(TOP)/configure/CONFIG
 PROD_IOC = picoScale
 
 #picoScale_CXXFLAGS = -L/home/ABTLUS/allan.bugyi/work/dev/iocs/SMARACT_PICOSCALE_IOC/src/
+
 picoScale_SYS_LIBS += ftchipid
 picoScale_SYS_LIBS += ftd2xx
 picoScale_SYS_LIBS += smaractio
@@ -30,7 +31,7 @@ picoScale_DBD += base.dbd
 picoScale_DBD += asyn.dbd
 picoScale_DBD += picoScale_functions.dbd
 
-picoScale_LIBS += asyn genSub
+picoScale_LIBS += asyn
 
 # picoScale_registerRecordDeviceDriver.cpp derives from picoScale.dbd
 picoScale_SRCS += picoScaledrv.cpp

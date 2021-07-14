@@ -49,13 +49,14 @@ static const char *driverName = "PicoScaledriver";
 
 //------------------------------------------ AsynPortDriver ------------------------------------------
 PicoScaledrv::PicoScaledrv(const char *portName, const char *ip) 
-	: asynPortDriver(portName, MAX_SIGNALS, NUM_PARAMS,
+	: asynPortDriver(portName, MAX_SIGNALS, /*NUM_PARAMS,*/
 	asynInt32Mask | asynFloat64Mask | asynDrvUserMask,// Interfaces that we implement
 	asynInt32Mask | asynFloat64Mask,// Interfaces that do callbacks
 	ASYN_MULTIDEVICE | ASYN_CANBLOCK, 1, /* ASYN_CANBLOCK=1, ASYN_MULTIDEVICE=1, autoConnect=1 */
 	0, 0) /* Default priority and stack size */
 {
 	createParam(pos_ch0_longInValueString, asynParamInt32, &pos_ch0_longInValue);
+	createParam(scalepos_ch0_longOutValueString, asynParamInt32, &scalepos_ch0_longOutValue);
 	createParam(vel_ch0_longInValueString, asynParamInt32, &vel_ch0_longInValue);
 	createParam(acc_ch0_longInValueString, asynParamInt32, &acc_ch0_longInValue);
 	createParam(swraw_ch0_analogInValueString, asynParamFloat64, &swraw_ch0_analogInValue);
@@ -81,6 +82,7 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(calcSys6_ch0_longInValueString, asynParamInt32, &calcSys6_ch0_longInValue);
 	createParam(calcSys7_ch0_longInValueString, asynParamInt32, &calcSys7_ch0_longInValue);*/
 	createParam(pos_ch1_longInValueString, asynParamInt32, &pos_ch1_longInValue);
+	createParam(scalepos_ch1_longOutValueString, asynParamInt32, &scalepos_ch1_longOutValue);
 	createParam(vel_ch1_longInValueString, asynParamInt32, &vel_ch1_longInValue);
 	createParam(acc_ch1_longInValueString, asynParamInt32, &acc_ch1_longInValue);
 	createParam(swraw_ch1_analogInValueString, asynParamFloat64, &swraw_ch1_analogInValue);
@@ -90,6 +92,7 @@ PicoScaledrv::PicoScaledrv(const char *portName, const char *ip)
 	createParam(swquality_ch1_analogInValueString, asynParamFloat64, &swquality_ch1_analogInValue);
 	createParam(s2wquality_ch1_analogInValueString, asynParamFloat64, &s2wquality_ch1_analogInValue);
 	createParam(pos_ch2_longInValueString, asynParamInt32, &pos_ch2_longInValue);
+	createParam(scalepos_ch2_longOutValueString, asynParamInt32, &scalepos_ch2_longOutValue);
 	createParam(vel_ch2_longInValueString, asynParamInt32, &vel_ch2_longInValue);
 	createParam(acc_ch2_longInValueString, asynParamInt32, &acc_ch2_longInValue);
 	createParam(swraw_ch2_analogInValueString, asynParamFloat64, &swraw_ch2_analogInValue);
@@ -413,8 +416,13 @@ unsigned int PicoScaledrv::configureStream(SA_SI_Handle handle){
 //Registering the data source(s) streamed values on records
 void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue, size_t dataSourceIndex){
     int aux_int64_t_prop;
+    int scalePos0, scalePos1, scalePos2;
     float aux_float64_t_prop;
     VariantValue v;
+
+    getIntegerParam(scalepos_ch0_longOutValue, &scalePos0);
+    getIntegerParam(scalepos_ch1_longOutValue, &scalePos1);
+    getIntegerParam(scalepos_ch2_longOutValue, &scalePos2);
     
     switch(streamConfig.enabledDataSources[dataSourceIndex].address.channelIndex){
         case 0:
@@ -422,7 +430,7 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 case 0:
                     v.i64value = *(const int64_t*)(pValue);
                     aux_int64_t_prop = static_cast<int>(v.i48value);
-                    setIntegerParam(pos_ch0_longInValue, aux_int64_t_prop); 
+                    setIntegerParam(pos_ch0_longInValue, aux_int64_t_prop / scalePos0); 
                     callParamCallbacks();
                 break;
                 case 1:
@@ -440,37 +448,37 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 case 3:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swraw_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swraw_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 4:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wraw_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wraw_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 5:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(sw_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(sw_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 6:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2w_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2w_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 7:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swquality_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swquality_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 8:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wquality_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wquality_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 /*case 9:
@@ -485,19 +493,19 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 break;*/
                 case 11:
                     v.i64value = *(const int64_t*)(pValue);
-                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
                     setIntegerParam(envtemp_ch0_longInValue, aux_int64_t_prop); 
                     callParamCallbacks();                    
                 break;
                 case 12:
                     v.i64value = *(const int64_t*)(pValue);
-                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
                     setIntegerParam(envHum_ch0_longInValue, aux_int64_t_prop); 
                     callParamCallbacks();                            
                 break;
                 case 13:
                     v.i64value = *(const int64_t*)(pValue);
-                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
                     setIntegerParam(envPress_ch0_longInValue, aux_int64_t_prop); 
                     callParamCallbacks();                            
                 break;                
@@ -508,7 +516,7 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 case 0:
                     v.i64value = *(const int64_t*)(pValue);
                     aux_int64_t_prop = static_cast<int>(v.i48value);
-                    setIntegerParam(pos_ch1_longInValue, aux_int64_t_prop); 
+                    setIntegerParam(pos_ch1_longInValue, aux_int64_t_prop / scalePos1); 
                     callParamCallbacks();
                 break;
                 case 1:
@@ -526,37 +534,37 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 case 3:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swraw_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swraw_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 4:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wraw_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wraw_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 5:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(sw_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(sw_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 6:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2w_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2w_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 7:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swquality_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swquality_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 8:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wquality_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wquality_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;                
             }
@@ -566,7 +574,7 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 case 0:
                     v.i64value = *(const int64_t*)(pValue);
                     aux_int64_t_prop = static_cast<int>(v.i48value);
-                    setIntegerParam(pos_ch2_longInValue, aux_int64_t_prop); 
+                    setIntegerParam(pos_ch2_longInValue, aux_int64_t_prop / scalePos2); 
                     callParamCallbacks();
                 break;
                 case 1:
@@ -584,37 +592,37 @@ void PicoScaledrv::picoScale_dataSourcesValues_EPICSRecordsWriting(void *pValue,
                 case 3:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swraw_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swraw_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 4:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wraw_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wraw_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 5:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(sw_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(sw_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 6:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2w_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2w_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 7:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swquality_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swquality_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 8:
                     v.f64value = *(const double*)(pValue);
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wquality_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wquality_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;                
             }
@@ -1076,11 +1084,15 @@ void PicoScaledrv::picoScale_streamPosition_allChannels(){
 
 void PicoScaledrv::picoScale_poll(){
     int channelIndex, datasrcIndex, aux_int64_t_prop;
+    int scalePos0, scalePos1, scalePos2;
     float aux_float64_t_prop;
     int32_t dataType;
     VariantValue v;
     getIntegerParam(channelindx_mbboValue, &channelIndex);
     getIntegerParam(datasrcindx_mbboValue, &datasrcIndex);
+    getIntegerParam(scalepos_ch0_longOutValue, &scalePos0);
+    getIntegerParam(scalepos_ch1_longOutValue, &scalePos1);
+    getIntegerParam(scalepos_ch2_longOutValue, &scalePos2);
     
     result = SA_SI_GetProperty_i32(handle, SA_SI_EPK(SA_SI_DATA_TYPE_PROP, channelIndex, datasrcIndex),&dataType,0); 
     
@@ -1120,7 +1132,7 @@ void PicoScaledrv::picoScale_poll(){
             switch(datasrcIndex){
                 case 0:
                     aux_int64_t_prop = static_cast<int>(v.i64value);
-                    setIntegerParam(pos_ch0_longInValue, aux_int64_t_prop); 
+                    setIntegerParam(pos_ch0_longInValue, aux_int64_t_prop / scalePos0); 
                     callParamCallbacks();
                 break;
                 case 1:
@@ -1135,32 +1147,32 @@ void PicoScaledrv::picoScale_poll(){
                 break;
                 case 3:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swraw_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swraw_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 4:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wraw_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wraw_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 5:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(sw_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(sw_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 6:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2w_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2w_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 7:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swquality_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swquality_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 8:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wquality_ch0_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wquality_ch0_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 /*case 9:
@@ -1174,17 +1186,17 @@ void PicoScaledrv::picoScale_poll(){
                     callParamCallbacks(); 
                 break;*/
                 case 11:
-                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
                     setIntegerParam(envtemp_ch0_longInValue, aux_int64_t_prop); 
                     callParamCallbacks();                    
                 break;
                 case 12:
-                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
                     setIntegerParam(envHum_ch0_longInValue, aux_int64_t_prop); 
                     callParamCallbacks();                            
                 break;
                 case 13:
-                    aux_float64_t_prop = static_cast<float>(v.f64value);
+                    aux_int64_t_prop = static_cast<int>(v.i64value);
                     setIntegerParam(envPress_ch0_longInValue, aux_int64_t_prop); 
                     callParamCallbacks();                            
                 break;
@@ -1194,7 +1206,7 @@ void PicoScaledrv::picoScale_poll(){
             switch(datasrcIndex){
                 case 0:
                     aux_int64_t_prop = static_cast<int>(v.i64value);
-                    setIntegerParam(pos_ch1_longInValue, aux_int64_t_prop); 
+                    setIntegerParam(pos_ch1_longInValue, aux_int64_t_prop / scalePos1); 
                     callParamCallbacks();
                 break;
                 case 1:
@@ -1209,32 +1221,32 @@ void PicoScaledrv::picoScale_poll(){
                 break;
                 case 3:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swraw_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swraw_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 4:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wraw_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wraw_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 5:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(sw_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(sw_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 6:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2w_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2w_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 7:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swquality_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swquality_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 8:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wquality_ch1_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wquality_ch1_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
             }
@@ -1243,7 +1255,7 @@ void PicoScaledrv::picoScale_poll(){
             switch(datasrcIndex){
                 case 0:
                     aux_int64_t_prop = static_cast<int>(v.i64value);
-                    setIntegerParam(pos_ch2_longInValue, aux_int64_t_prop); 
+                    setIntegerParam(pos_ch2_longInValue, aux_int64_t_prop / scalePos2); 
                     callParamCallbacks();
                 break;
                 case 1:
@@ -1258,32 +1270,32 @@ void PicoScaledrv::picoScale_poll(){
                 break;
                 case 3:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swraw_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swraw_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 4:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wraw_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wraw_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 5:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(sw_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(sw_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 6:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2w_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2w_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 7:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(swquality_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(swquality_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
                 case 8:
                     aux_float64_t_prop = static_cast<float>(v.f64value);
-                    setDoubleParam(s2wquality_ch2_analogInValue, aux_int64_t_prop); 
+                    setDoubleParam(s2wquality_ch2_analogInValue, aux_float64_t_prop); 
                     callParamCallbacks(); 
                 break;
             }

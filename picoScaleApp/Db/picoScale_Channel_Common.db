@@ -4,8 +4,19 @@ record(longin, "$(C):$(P):POS_$(Ch)"){
     field(DESC, "Position $(Ch)")
     field(DTYP, "asynInt32")
     field(SCAN, "I/O Intr")
-    field(EGU, "nm")
+    field(EGU, "pm")
     field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))POS_CH$(Ch)_LONGIN_VAL")
+}
+
+record(longout, "$(C):$(P):SCALEPOS_$(Ch)"){
+    field(DESC, "Position $(Ch) rescaling")
+    field(DTYP, "asynInt32")
+    field(VAL, "1")
+    field(EGU, "1/pm")
+    field(HOPR, "1000")
+    field(LOPR, "1")
+    field(PINI, "YES")
+    field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))SCALEPOS_CH$(Ch)_LONGOUT_VAL")
 }
 
 record(longin, "$(C):$(P):VEL_$(Ch)"){

@@ -1,6 +1,7 @@
 //-------------------------------- Input parameters --------------------------------
 //Channel 0 parameters
 #define pos_ch0_longInValueString		"POS_CH0_LONGIN_VAL"
+#define scalepos_ch0_longOutValueString	"SCALEPOS_CH0_LONGOUT_VAL"
 #define vel_ch0_longInValueString		"VEL_CH0_LONGIN_VAL"
 #define acc_ch0_longInValueString		"ACC_CH0_LONGIN_VAL"
 #define swraw_ch0_analogInValueString		"SWRAW_CH0_ANALOGIN_VAL"
@@ -28,6 +29,7 @@
 
 //Channel 1 parameters
 #define pos_ch1_longInValueString		"POS_CH1_LONGIN_VAL"
+#define scalepos_ch1_longOutValueString	"SCALEPOS_CH1_LONGOUT_VAL"
 #define vel_ch1_longInValueString		"VEL_CH1_LONGIN_VAL"
 #define acc_ch1_longInValueString		"ACC_CH1_LONGIN_VAL"
 #define swraw_ch1_analogInValueString		"SWRAW_CH1_ANALOGIN_VAL"
@@ -39,6 +41,7 @@
 
 //Channel 2 parameters 
 #define pos_ch2_longInValueString		"POS_CH2_LONGIN_VAL"
+#define scalepos_ch2_longOutValueString	"SCALEPOS_CH2_LONGOUT_VAL"
 #define vel_ch2_longInValueString		"VEL_CH2_LONGIN_VAL"
 #define acc_ch2_longInValueString		"ACC_CH2_LONGIN_VAL"
 #define swraw_ch2_analogInValueString		"SWRAW_CH2_ANALOGIN_VAL"
@@ -171,6 +174,7 @@ class PicoScaledrv : public asynPortDriver {
 		// --- Input parameters ---
 		//Channel 0 parameters
 		int pos_ch0_longInValue;
+		int scalepos_ch0_longOutValue;
 		int vel_ch0_longInValue;
 		int acc_ch0_longInValue;
 		int swraw_ch0_analogInValue;
@@ -198,6 +202,7 @@ class PicoScaledrv : public asynPortDriver {
 
 		//Channel 1 parameters
 		int pos_ch1_longInValue;
+		int scalepos_ch1_longOutValue;
 		int vel_ch1_longInValue;
 		int acc_ch1_longInValue;
 		int swraw_ch1_analogInValue;
@@ -209,6 +214,7 @@ class PicoScaledrv : public asynPortDriver {
 
 		//Channel 2 parameters 
 		int pos_ch2_longInValue;
+		int scalepos_ch2_longOutValue;
 		int vel_ch2_longInValue;
 		int acc_ch2_longInValue;
 		int swraw_ch2_analogInValue;

@@ -17,6 +17,17 @@ record(longout, "$(C):$(P):FRAMERATE"){
     field(LOPR, "1")
     field(PINI, "YES")
     field(OUT, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FRAMERATE_LONGOUT_VAL")
+    field(FLNK,"$(C):$(P):REAL_FRAMERATE")
+}
+
+record(longin, "$(C):$(P):REAL_FRAMERATE"){
+    field(DESC, "PicoScale current operation framerate")
+    field(DTYP, "asynInt32")
+    field(VAL, "0")
+    field(EGU, "Hz")
+    field(HOPR, "10000000")
+    field(LOPR, "1")
+    field(INP, "@asyn($(PORTNAME),$(ADDRESS),$(TIMEOUT))FRAMERATE_LONGOUT_VAL")
 }
 
 record(longout, "$(C):$(P):BUFFERS"){
